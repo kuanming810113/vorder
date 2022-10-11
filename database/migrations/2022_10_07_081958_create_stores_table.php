@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('user_id')->comment('使用者id');
             $table->string('name');
             $table->string('url');
-            $table->text('description')->nullable();
+            $table->text('intro')->nullable();
             $table->string('line_url')->nullable();
             $table->string('fb_url')->nullable();
             $table->string('ig_url')->nullable();

@@ -5,8 +5,15 @@ Vue.use(VueRouter)
 
 const routes = [{
         path: '/',
-        redirect: 'order',
+        redirect: 'dashboard',
     },
+    //儀錶板
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('@/views/page/Dashboard.vue'),
+    },
+
     //訂單
     {
         path: '/order',
@@ -94,52 +101,11 @@ const routes = [{
             layout: 'blank',
         },
     },
+    {
+        path: '*',
+        redirect: 'error-404',
+    },
 
-    // {
-    //     path: '/order_timely',
-    //     name: 'order_timely',
-    //     component: () => import('@/views/back/Order_timely.vue'),
-    // },
-    // {
-    //     path: '/cost',
-    //     name: 'cost',
-    //     component: () => import('@/views/back/Cost.vue'),
-    // },
-    // {
-    //     path: '/vendor',
-    //     name: 'vendor',
-    //     component: () => import('@/views/back/Vendor.vue'),
-    // },
-    // {
-    //     path: '/product',
-    //     name: 'product',
-    //     component: () => import('@/views/back/Product.vue'),
-    // },
-    // {
-    //     path: '/change_inventory',
-    //     name: 'change_inventory',
-    //     component: () => import('@/views/back/Change_inventory.vue'),
-    // },
-    // {
-    //     path: '/change_inventory_record',
-    //     name: 'change_inventory_record',
-    //     component: () => import('@/views/back/Change_inventory_record.vue'),
-    // },
-    // {
-    //     path: '/product_type',
-    //     name: 'product_type',
-    //     component: () => import('@/views/back/Product_type.vue'),
-    // },
-    // {
-    //     path: '/product_finish',
-    //     name: 'product_finish',
-    //     component: () => import('@/views/back/Product_finish.vue'),
-    // },
-    // {
-    //     path: '/user',
-    //     name: 'user',
-    //     component: () => import('@/views/back/User.vue'),
-    // },
 
     // {
     //   path: '/dashboard',
@@ -201,10 +167,7 @@ const routes = [{
     //     layout: 'blank',
     //   },
     // },
-    // {
-    //   path: '*',
-    //   redirect: 'error-404',
-    // },
+
 ]
 
 const router = new VueRouter({

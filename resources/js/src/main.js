@@ -9,6 +9,7 @@ import _ from "lodash"
 
 window.axios = require('axios')// 註冊全域
 
+
 Vue.config.productionTip = false
 
 new Vue({

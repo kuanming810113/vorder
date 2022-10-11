@@ -15,7 +15,7 @@
                     </v-avatar>
                 </v-badge>
                 <div class="d-inline-flex flex-column justify-center ms-3" style="vertical-align: middle">
-                    <span class="text--primary font-weight-semibold mb-n1"> 使用者 </span>
+                    <span class="text--primary font-weight-semibold mb-n1"> {{main.user_name}} </span>
                     <small class="text--disabled text-capitalize">Admin</small>
                 </div>
             </div>
@@ -98,14 +98,15 @@
                         {{ icons.mdiLogoutVariant }}
                     </v-icon>
                 </v-list-item-icon>
-                <v-list-item-content>
-                    <v-list-item-title>Logout</v-list-item-title>
+                <v-list-item-content @click="logout">
+                    <v-list-item-title>登出</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
         </v-list>
     </v-menu>
 </template>
 <script>
+import _ from "lodash"
 import {
     mdiAccountOutline,
     mdiEmailOutline,
@@ -118,7 +119,7 @@ import {
 } from '@mdi/js'
 
 export default {
-    setup() {
+    data() {
         return {
             icons: {
                 mdiAccountOutline,
@@ -130,8 +131,43 @@ export default {
                 mdiHelpCircleOutline,
                 mdiLogoutVariant,
             },
+            main:{
+                user_name:'test'
+            }
         }
     },
+    methods: {
+        logout: _.debounce(function() {
+            var self = this;
+            axios.post('/api/user/logout')
+                .then(function(response) {
+                    if (response.data.result == 'success') {
+                        self.$router.push({ path: '/login' })
+                    }
+                })
+                .catch(function(error) {
+                    self.$router.push({ path: '/error-500' })
+                });
+
+        }, 1000, {
+            'leading': true,
+            'trailing': false,
+        }),
+
+    },
+    created() {
+        var self = this;
+        axios.post('/api/user/get/auth')
+            .then(function(response) {
+                if (response.data.result == 'success') {
+                    self.main.user_name = response.data.data.name;
+                }
+            })
+            .catch(function(error) {
+                location.href='/error-403'
+            });
+    }
+
 }
 
 </script>

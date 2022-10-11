@@ -11,37 +11,34 @@
         </div>
         <!-- Navigation Items -->
         <v-list expand shaped class="vertical-nav-menu-items pr-5">
+            <nav-menu-link title="儀表板" :to="{ name: 'dashboard' }" :icon="icons.mdiViewListOutline"></nav-menu-link>
             <nav-menu-group title="訂單" :icon="icons.mdiViewListOutline">
                 <nav-menu-link title="訂單列表" :to="{ name: 'order' }"></nav-menu-link>
                 <nav-menu-link title="本日即時訂單" :to="{ name: 'order_timely' }"></nav-menu-link>
             </nav-menu-group>
             <nav-menu-group title="成本" :icon="icons.mdiViewListOutline">
                 <nav-menu-link title="成本紀錄" :to="{ name: 'cost' }"></nav-menu-link>
-                <nav-menu-link title="供應商" :to="{ name: 'vendor' }"></nav-menu-link>
+                <nav-menu-link title="合作廠商" :to="{ name: 'company' }"></nav-menu-link>
             </nav-menu-group>
-            <nav-menu-group title="商品管理" :icon="icons.mdiViewListOutline">
-                <nav-menu-link title="商品庫存" :to="{ name: 'product' }"></nav-menu-link>
+            <nav-menu-group title="庫存管理" :icon="icons.mdiViewListOutline">
+                <nav-menu-link title="商品設定" :to="{ name: 'product' }"></nav-menu-link>
                 <nav-menu-link title="倉儲管理" :to="{ name: 'change_inventory' }"></nav-menu-link>
                 <nav-menu-link title="庫存更動紀錄" :to="{ name: 'change_inventory_record' }"></nav-menu-link>
             </nav-menu-group>
-            <nav-menu-group title="成品設定" :icon="icons.mdiViewListOutline">
-                <nav-menu-link title="成品分類" :to="{ name: 'product_type' }"></nav-menu-link>
-                <nav-menu-link title="成品設定" :to="{ name: 'product_finish' }"></nav-menu-link>
+            <nav-menu-group title="發布商品設定" :icon="icons.mdiViewListOutline">
+                <nav-menu-link title="發布類別" :to="{ name: 'goods_category' }"></nav-menu-link>
+                <nav-menu-link title="發布商品" :to="{ name: 'goods' }"></nav-menu-link>
             </nav-menu-group>
             <nav-menu-group title="一般設定" :icon="icons.mdiViewListOutline">
                 <nav-menu-link title="使用者設定" :to="{ name: 'user' }"></nav-menu-link>
             </nav-menu-group>
         </v-list>
-
     </v-navigation-drawer>
 </template>
 <script>
 // eslint-disable-next-line object-curly-newline
 import {
-
     mdiViewListOutline,
-
-
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -62,9 +59,7 @@ export default {
     setup() {
         return {
             icons: {
-
                 mdiViewListOutline,
-
             },
         }
     },
