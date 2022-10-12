@@ -11,7 +11,7 @@ const routes = [{
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: () => import('@/views/page/Dashboard.vue'),
+      component: () => import('@/views/dashboard/index.vue'),
     },
 
     //訂單
@@ -35,6 +35,29 @@ const routes = [{
         name: 'order-get',
         component: () => import('@/views/order/Get.vue'),
     },
+
+    //商品設定
+    {
+        path: '/product',
+        name: 'product',
+        component: () => import('@/views/product/Index.vue'),
+    },
+    {
+        path: '/product/insert',
+        name: 'product-insert',
+        component: () => import('@/views/product/Insert.vue'),
+    },
+    {
+        path: '/product/update/:id',
+        name: 'product-update',
+        component: () => import('@/views/product/Update.vue'),
+    },
+    {
+        path: '/product/get',
+        name: 'product-get',
+        component: () => import('@/views/product/Get.vue'),
+    },
+
     //登入
     {
         path: '/login',
@@ -59,21 +82,6 @@ const routes = [{
         path: '/user',
         name: 'user',
         component: () => import('@/views/user/Index.vue'),
-    },
-    {
-        path: '/user/insert',
-        name: 'user-insert',
-        component: () => import('@/views/user/Insert.vue'),
-    },
-    {
-        path: '/user/update/:id',
-        name: 'user-update',
-        component: () => import('@/views/user/Update.vue'),
-    },
-    {
-        path: '/user/get',
-        name: 'user-get',
-        component: () => import('@/views/user/Get.vue'),
     },
 
     //錯誤頁面

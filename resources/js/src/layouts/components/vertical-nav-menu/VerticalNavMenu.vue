@@ -30,7 +30,7 @@
                 <nav-menu-link title="發布商品" :to="{ name: 'goods' }"></nav-menu-link>
             </nav-menu-group>
             <nav-menu-group title="一般設定" :icon="icons.mdiViewListOutline">
-                <nav-menu-link title="使用者設定" :to="{ name: 'user' }"></nav-menu-link>
+                <nav-menu-link title="基本設定" :to="{ name: 'user' }"></nav-menu-link>
             </nav-menu-group>
         </v-list>
     </v-navigation-drawer>

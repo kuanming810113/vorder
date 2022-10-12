@@ -19,16 +19,8 @@ use Illuminate\Support\Facades\Route;
 // });
 
 use App\Http\Controllers\UserController;
-// Route::group([
-//     //'middleware' => 'auth:sanctum',
-//     'prefix' => '/user'
-// ], function () {
-// 	Route::post('/get/{action_type}', [UserController::class, 'get']);
-//     Route::post('/register', [UserController::class, 'register']);
-//     Route::post('/logout', [UserController::class, 'register']);
-// });
 Route::group([
-    //'middleware' => 'auth:sanctum',
+    'middleware' => 'auth:sanctum',
     'prefix' => '/user'
 ], function () {
 	Route::post('/update/{action_type}', [UserController::class, 'update']);

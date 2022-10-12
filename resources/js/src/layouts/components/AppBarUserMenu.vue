@@ -132,7 +132,7 @@ export default {
                 mdiLogoutVariant,
             },
             main:{
-                user_name:'test'
+                user_name:''
             }
         }
     },
