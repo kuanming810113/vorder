@@ -30,21 +30,21 @@ class UserController extends Controller
             return response()->json(['result' => 'validator_error','data' => $validator->errors()->all()], 400);
         }
 
+        Store::insert([
+            'name'=>$input['store_name'],
+            'url'=> md5(uniqid()),
+            'created_at'=> NOW()
+        ]);   
+
+        $last_id = DB::getPdo()->lastInsertId();
+
         User::insert([
+            'store_id'=> $last_id,
             'email'=>$input['email'],
             'name'=>$input['user_name'],
             'password'=>Hash::make($input['password']),
             'created_at'=> NOW()
         ]);
-
-        $last_id = DB::getPdo()->lastInsertId();
-
-        Store::insert([
-            'name'=>$input['store_name'],
-            'user_id'=> $last_id,
-            'url'=> md5(uniqid()),
-            'created_at'=> NOW()
-        ]);        
 
         return response()->json(['result' => 'success'], 200);
 	}
@@ -109,7 +109,7 @@ class UserController extends Controller
                     'users.phone as user_phone',
                     'users.email as user_email',
                     'stores.*')
-                ->leftJoin('stores', 'stores.user_id', '=', 'users.id')
+                ->leftJoin('stores', 'stores.id', '=', 'users.store_id')
                 ->where('users.id', Auth::id())->first();
 
                 return response()->json(['result' => 'success','data' => $data]);

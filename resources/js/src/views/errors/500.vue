@@ -13,7 +13,7 @@
             <div class="misc-character d-flex justify-center">
                 <v-img max-width="500" :src="require('@/assets/images/3d-characters/error.png').default"></v-img>
             </div>
-            <v-btn color="primary" to="/login" class="mb-4"> 登入畫面 </v-btn>
+            <v-btn color="primary" to="/" class="mb-4"> 回到首頁 </v-btn>
         </div>
     </div>
 </template>

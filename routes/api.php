@@ -33,3 +33,34 @@ Route::group([
     Route::post('/register', [UserController::class, 'register']);
     Route::post('/login', [UserController::class, 'login']);
 });
+
+
+use App\Http\Controllers\ProductController;
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => '/product'
+], function () {
+	Route::post('/index', [ProductController::class, 'index']);
+	Route::post('/update/{action_type}', [ProductController::class, 'update']);
+	Route::post('/insert', [ProductController::class, 'insert']);
+	Route::post('/delete', [ProductController::class, 'delete']);
+});
+Route::group([
+    'prefix' => '/product'
+], function () {
+	Route::post('/get/{action_type}', [ProductController::class, 'get']);
+});
+
+
+use App\Http\Controllers\ProductStyleController;
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => '/product_style'
+], function () {
+	Route::post('/delete', [ProductStyleController::class, 'delete']);
+});
+Route::group([
+    'prefix' => '/product_style'
+], function () {
+	Route::post('/get/{action_type}', [ProductStyleController::class, 'get']);
+});

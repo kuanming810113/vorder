@@ -13,14 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('stores', function (Blueprint $table) {
+        Schema::create('product_styles', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('url');
-            $table->text('intro')->nullable();
-            $table->string('line_url')->nullable();
-            $table->string('fb_url')->nullable();
-            $table->string('ig_url')->nullable();
+            $table->integer('store_id')->comment('店家id');
+            $table->integer('product_id')->comment('商品id');
+            $table->string('name')->comment('樣式名稱');
+            $table->integer('amount')->comment('數量');  
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stores');
+        Schema::dropIfExists('product_styles');
     }
 };

@@ -31,7 +31,7 @@ const routes = [{
         component: () => import('@/views/order/Update.vue'),
     },
     {
-        path: '/order/get',
+        path: '/order/get/:id',
         name: 'order-get',
         component: () => import('@/views/order/Get.vue'),
     },
@@ -41,6 +41,9 @@ const routes = [{
         path: '/product',
         name: 'product',
         component: () => import('@/views/product/Index.vue'),
+        // meta: {
+        //     keepAlive: true,
+        // },
     },
     {
         path: '/product/insert',
@@ -53,7 +56,7 @@ const routes = [{
         component: () => import('@/views/product/Update.vue'),
     },
     {
-        path: '/product/get',
+        path: '/product/get/:id',
         name: 'product-get',
         component: () => import('@/views/product/Get.vue'),
     },

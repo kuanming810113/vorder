@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->integer('store_id')->comment('店家id');
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->nullable();

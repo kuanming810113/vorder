@@ -13,14 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('stores', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('url');
-            $table->text('intro')->nullable();
-            $table->string('line_url')->nullable();
-            $table->string('fb_url')->nullable();
-            $table->string('ig_url')->nullable();
+            $table->integer('store_id')->comment('店家id');
+            $table->string('name')->comment('商品名稱');
+            $table->text('intro')->nullable()->comment('商品介紹');
+            $table->integer('weight')->nullable()->comment('重量');
+            $table->string('volume')->nullable()->comment('體積');
             $table->timestamps();
         });
     }
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stores');
+        Schema::dropIfExists('products');
     }
 };
