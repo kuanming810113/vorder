@@ -9,7 +9,7 @@
         </v-card>
         <v-card>
             <v-card-title>
-                <v-btn class="primary mr-2" to="goods/insert">新增</v-btn>
+                <v-btn class="primary mr-2" to="goods_combo/insert">新增</v-btn>
                 <v-badge :value="searchPlusActive" :content="'!'" color="error" overlap>
                     <v-btn class="primary mr-2" @click="seachDialog=true">進階搜尋</v-btn>
                 </v-badge>
@@ -20,11 +20,6 @@
                 <template v-slot:item.name="{ item }">
                     <a href="javascript:void(0)" @click="getView(item.id)">{{item.name}}</a>
                 </template>
-                <template v-slot:item.is_show="{ item }">
-                    <v-chip small :color="getColor(item.is_show)" v-if="item.is_show == '1'">是</v-chip>
-                    <v-chip small :color="getColor(item.is_show)" v-if="item.is_show == '0'">否</v-chip>
-                </template>
-
                 <template v-slot:item.tool="{ item }">
                     <v-btn small rounded @click="updateView(item.id)">編輯</v-btn>
                     <v-btn small rounded @click="deleteData(item.id)">刪除</v-btn>
@@ -45,10 +40,7 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12">
-                                        <v-text-field label="商品名稱" v-model="searchPlus.name"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12">
-                                        <v-text-field type="number" label="各樣式的數量小於" v-model="searchPlus.amount"></v-text-field>
+                                        <v-text-field label="組合名稱" v-model="searchPlus.name"></v-text-field>
                                     </v-col>
                                 </v-row>
                             </v-container>
@@ -96,17 +88,14 @@
                     href: '',
                 },
                 {
-                    text: '上架商品',
+                    text: '組合設定',
                     href: window.location.pathname + window.location.search,
                 },
             ],
             headers: [
                 { text: '流水號', value: 'sno', sortable: false },
-                { text: '上架商品名稱', value: 'name', sortable: true },
-                { text: '類別', value: 'goods_categories_name', sortable: false },
-                { text: '售價', value: 'price', sortable: false },
-                { text: '是否上架', value: 'is_show', sortable: false },
-                { text: '排序', value: 'sort', sortable: false },
+                { text: '組合名稱', value: 'name', sortable: true },
+                { text: '排序', value: 'sort', sortable: true },
                 { text: '創建日期', value: 'created_at', sortable: true },
                 { text: '功能', value: 'tool', sortable: false },
             ],
@@ -124,6 +113,7 @@
             seachDialog: false,
 
             list: [],
+
         }
     },
     watch: {
@@ -150,7 +140,7 @@
             var self = this;
             self.seachDialog = false
             self.getData()
-            if (self.searchPlus.name || self.searchPlus.amount) {
+            if (self.searchPlus.name) {
                 self.searchPlusActive = true;
             }else{
                 self.searchPlusActive = false;
@@ -159,16 +149,16 @@
         },
         updateView(id) {
             var self = this;
-            self.$router.push({ name: 'goods-update', params: { id: id }  });
+            self.$router.push({ name: 'goods_combo-update', params: { id: id }  });
         },
         getView(id) {
             var self = this;
-            self.$router.push({ name: 'goods-get', params: { id: id } });
+            self.$router.push({ name: 'goods_combo-get', params: { id: id } });
         },
         deleteData(id){
             var self = this;
             if (confirm("確定要永久刪除嗎 ?")==true){    
-                axios.post('/api/goods/delete', {
+                axios.post('/api/goods_combo/delete', {
                     id:id
                 })
                 .then(function (response) {
@@ -185,7 +175,7 @@
             var self = this;
             self.loading = true;
             const { sortBy, sortDesc } = self.options
-            axios.post('/api/goods/index', {
+            axios.post('/api/goods_combo/index', {
                     page: self.page,
                     sort_by: sortBy[0],
                     sort_desc: sortDesc[0],
@@ -204,11 +194,6 @@
                 .catch(function(error) {
                     self.$router.push({ path: '/error-500' })
                 });
-        },
-        getColor(is_show) {
-            if (is_show == '1') return 'success'
-            else if (is_show == '0') return 'error'
-            else return 'error'
         },
     },
     activated(){

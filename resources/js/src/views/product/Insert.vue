@@ -27,7 +27,7 @@
                             <v-row>
                                 <v-col md="6" cols="12">
                                     <validation-provider v-slot="{ errors }" name="商品名稱" rules="required">
-                                        <v-text-field dense outlined v-model="product.name" :error-messages="errors" label="商品名稱"></v-text-field>
+                                        <v-text-field dense outlined v-model="product.name" :error-messages="errors" label="商品名稱*"></v-text-field>
                                     </validation-provider>
                                 </v-col>
                                 <v-col md="6" cols="12">
@@ -50,6 +50,12 @@
                 </v-tab-item>
                 <v-tab-item class="pa-6 mt-6">
                     <validation-observer ref="style_observer">
+                        <v-alert
+                            dense
+                            elevation="2"
+                            text
+                            type="warning"
+                        >數量為 -99 代表 數量無限多</v-alert>
                         <form @submit.prevent="submit">
                             <v-card outlined shaped class="pa-4 mb-3" outlined elevation="3" v-for="(item, index) in style" :key="index">
                                 <v-row>
@@ -59,12 +65,12 @@
                                     </v-col>
                                     <v-col md="6" cols="12">
                                         <validation-provider v-slot="{ errors }" name="樣式名稱" rules="required">
-                                            <v-combobox dense outlined v-model="item.name" :items="style_autocomplete" :error-messages="errors" label="樣式名稱"></v-combobox>
+                                            <v-combobox dense outlined v-model="item.name" :items="style_autocomplete" :error-messages="errors" label="樣式名稱*"></v-combobox>
                                         </validation-provider>
                                     </v-col>
                                     <v-col md="6" cols="12">
                                         <validation-provider v-slot="{ errors }" name="樣式數量" rules="required">
-                                            <v-text-field type="number" dense outlined v-model="item.amount" :error-messages="errors" label="數量"></v-text-field>
+                                            <v-text-field type="number" dense outlined v-model="item.amount" :error-messages="errors" label="數量*"></v-text-field>
                                         </validation-provider>
                                     </v-col>
                                 </v-row>
@@ -72,7 +78,7 @@
                             <v-row>
                                 <v-col cols="12" class="d-flex">
                                     <v-btn color="info" class="mt-5 mr-auto" @click="add_style">
-                                        新增樣式
+                                        <v-icon >{{ icons.mdiPlus }}</v-icon>樣式
                                     </v-btn>
                                     <v-btn color="primary" class="mt-5 mr-4 " @click="insert">
                                         送出
@@ -87,7 +93,7 @@
     </div>
 </template>
 <script>
-import { mdiTrashCanOutline } from '@mdi/js'
+import { mdiTrashCanOutline,mdiPlus } from '@mdi/js'
 
 import { ValidationProvider, ValidationObserver, localize, extend } from 'vee-validate/dist/vee-validate.full.esm';
 import tw from "vee-validate/dist/locale/zh_TW.json";
@@ -102,7 +108,8 @@ export default {
     setup() {
         return {
             icons: {
-                mdiTrashCanOutline
+                mdiTrashCanOutline,
+                mdiPlus
             },
         }
     },
@@ -118,12 +125,12 @@ export default {
                 },
                 {
                     text: '新增',
-                    href: '/product/insert',
+                    href: window.location.pathname + window.location.search,
                 },
             ],
             tabNum: 0,
             tabs: [
-                { title: '基本資料' },
+                { title: '基本設定' },
                 { title: '樣式設定' },
             ],
 
@@ -200,7 +207,7 @@ export default {
             .catch(function(error) {
                 self.$router.push({ path: '/error-500' })
             });        
-    }
+    },
 }
 
 </script>

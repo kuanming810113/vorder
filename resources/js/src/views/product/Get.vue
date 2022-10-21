@@ -27,17 +27,17 @@
                             <v-row>
                                 <v-col md="6" cols="12">
                                     <validation-provider v-slot="{ errors }" name="商品名稱" rules="required">
-                                        <v-text-field dense outlined v-model="product.name" :error-messages="errors" label="商品名稱" disabled></v-text-field>
+                                        <v-text-field dense outlined v-model="product.name" :error-messages="errors" label="商品名稱*" filled readonly></v-text-field>
                                     </validation-provider>
                                 </v-col>
                                 <v-col md="6" cols="12">
-                                    <v-text-field type="number" dense outlined v-model="product.weight" label="商品重量" disabled></v-text-field>
+                                    <v-text-field type="number" dense outlined v-model="product.weight" label="商品重量"  filled readonly></v-text-field>
                                 </v-col>
                                 <v-col md="6" cols="12">
-                                    <v-text-field dense outlined v-model="product.volume" label="商品體積" disabled></v-text-field>
+                                    <v-text-field dense outlined v-model="product.volume" label="商品體積"  filled readonly></v-text-field>
                                 </v-col>
                                 <v-col cols="12">
-                                    <v-textarea dense outlined v-model="product.intro" label="商品描述" disabled></v-textarea>
+                                    <v-textarea dense outlined v-model="product.intro" label="商品描述"  filled readonly></v-textarea>
                                 </v-col>
                                 <v-col cols="12" class="d-flex justify-end">
                                     <v-btn class="mt-5 mr-4" @click="tabNum++">
@@ -49,6 +49,12 @@
                     </validation-observer>
                 </v-tab-item>
                 <v-tab-item class="pa-6 mt-6">
+                    <v-alert
+                        dense
+                        elevation="2"
+                        text
+                        type="warning"
+                    >數量為 -99 代表 數量無限多</v-alert>
                     <validation-observer ref="style_observer">
                         <form @submit.prevent="submit">
                             <v-card outlined shaped class="pa-4 mb-3" outlined elevation="3" v-for="(item, index) in style" :key="index">
@@ -59,20 +65,20 @@
                                     </v-col>
                                     <v-col md="6" cols="12">
                                         <validation-provider v-slot="{ errors }" name="樣式名稱" rules="required">
-                                            <v-combobox dense outlined v-model="item.name" :items="style_autocomplete" :error-messages="errors" label="樣式名稱" disabled></v-combobox>
+                                            <v-combobox dense outlined v-model="item.name" :items="style_autocomplete" :error-messages="errors" label="樣式名稱*"  filled readonly></v-combobox>
                                         </validation-provider>
                                     </v-col>
                                     <v-col md="6" cols="12">
                                         <validation-provider v-slot="{ errors }" name="樣式數量" rules="required">
-                                            <v-text-field type="number" dense outlined v-model="item.amount" :error-messages="errors" label="數量" disabled > </v-text-field >
+                                            <v-text-field type="number" dense outlined v-model="item.amount" :error-messages="errors" label="數量*"  filled readonly > </v-text-field >
                                         </validation-provider>
                                     </v-col>
                                 </v-row>
                             </v-card>
                             <v-row>
-                                <v-col cols="12" class="d-flex">
-                                    <v-btn color="primary" class="mt-5 mr-4 " @click="updateData">
-                                        送出
+                                <v-col cols="12" class="d-flex justify-end">
+                                    <v-btn color="primary" class="mt-5 mr-4" @click="updateView()">
+                                        前往更新
                                     </v-btn>
                                 </v-col>
                             </v-row>
@@ -124,7 +130,7 @@ export default {
                 },
                 {
                     text: '查看',
-                    href: '/product/get/'+this.$route.params.id,
+                    href: window.location.pathname + window.location.search,
                 },
             ],
             tabNum: 0,
@@ -141,76 +147,10 @@ export default {
         }
     },
     methods: {
-        updateData: _.debounce(function() {
+        updateView() {
             var self = this;
-            self.$refs.product_observer.validate().then(success => {
-                if (success) {
-                    self.$refs.style_observer.validate().then(success => {
-                        if (success) {
-                            axios.post('/api/product/update/id', {
-                                    id:self.$route.params.id,
-                                    name: self.product.name,
-                                    intro: self.product.intro,
-                                    weight: self.product.weight,
-                                    volume: self.product.volume,
-                                    style: self.style,
-                                })
-                                .then(function(response) {
-                                    if (response.data.result == 'success') {
-                                        self.$router.push({ path: '/product' })
-                                    }
-                                })
-                                .catch(function(error) {
-                                    self.$router.push({ path: '/error-500' })
-                                });
-                        }
-                    })
-                } else {
-                    self.tabNum = 0;
-                    return false;
-                }
-            })
-
-        }, 1000, {
-            'leading': true,
-            'trailing': false,
-        }),
-        addStyle() {
-            var self = this;
-            self.style.push({
-                name: '',
-                amount: '',
-            });
+            self.$router.push({ name: 'product-update', params: { id: this.$route.params.id } });
         },
-        deleteStyle(key,id) {
-            var self = this;
-            if (id) {
-                if (confirm("您確定要永久刪除嗎 ?")==true){
-                    axios.post('/api/product_style/delete', {
-                        id:id
-                    })
-                    .then(function (response) {
-                        if (response.data.result == 'success') {
-                            self.snackbar = true;
-                            self.snackbar_text = '刪除成功 !'
-
-                            self.style.splice(key, 1)
-                        }
-                    })
-                    .catch(function (error) {
-                        if (error.response.data.result = 'amount_error') {
-                            self.snackbar = true;
-                            self.snackbar_text = '至少保留一項樣式 ! 請先新增樣式(並更新後)再刪除'
-                            return false;
-                        }
-                        self.$router.push({ path: '/error-500' })
-                    });
-                }
-            }else{
-                self.style.splice(key, 1)
-            }
-            
-        }
     },
     created() {
         var self = this;
@@ -243,7 +183,7 @@ export default {
             .catch(function(error) {
                 self.$router.push({ path: '/error-500' })
             });   
-    }
+    },
 }
 
 </script>

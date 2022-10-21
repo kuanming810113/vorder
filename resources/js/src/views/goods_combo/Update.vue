@@ -26,15 +26,12 @@
                         <form @submit.prevent="submit">
                             <v-row>
                                 <v-col md="6" cols="12">
-                                    <validation-provider v-slot="{ errors }" name="類別名稱" rules="required">
-                                        <v-text-field dense outlined v-model="goods_category.name" :error-messages="errors" label="類別名稱*"></v-text-field>
+                                    <validation-provider v-slot="{ errors }" name="組合名稱" rules="required">
+                                        <v-text-field dense outlined v-model="goods_combo.name" :error-messages="errors" label="組合名稱*" hint="如 : 一般、前菜、主菜、A區、B區 ...."></v-text-field>
                                     </validation-provider>
                                 </v-col>
                                 <v-col md="6" cols="12">
-                                    <v-select dense outlined v-model="goods_category.is_show" label="是否顯示" :items="is_show_items"></v-select>
-                                </v-col>
-                                <v-col md="6" cols="12">
-                                    <v-text-field type="number" dense outlined v-model="goods_category.sort" label="排序" hint="數字越大排越前面
+                                    <v-text-field type="number" dense outlined v-model="goods_combo.sort" label="排序" hint="數字越大排越前面
                                     "></v-text-field>
                                 </v-col>
                                 <v-col cols="12" class="d-flex justify-end">
@@ -70,8 +67,8 @@ export default {
                     href: '',
                 },
                 {
-                    text: '類別設定',
-                    href: '/goods_category',
+                    text: '組合設定',
+                    href: '/goods_combo',
                 },
                 {
                     text: '編輯',
@@ -82,14 +79,9 @@ export default {
             tabs: [
                 { title: '基本設定' },
             ],
-            is_show_items:[
-                { text: '是', value: '1'},
-                { text: '否', value: '0'},
-            ],
-            goods_category: {
+            goods_combo: {
                 name: '',
                 sort: '1',
-                is_show: '',
             },
         }
     },
@@ -98,15 +90,14 @@ export default {
             var self = this;
             self.$refs.basic_observer.validate().then(success => {
                 if (success) {
-                    axios.post('/api/goods_category/update/id', {
+                    axios.post('/api/goods_combo/update/id', {
                             id:self.$route.params.id,
-                            name: self.goods_category.name,
-                            sort: self.goods_category.sort,
-                            is_show: self.goods_category.is_show
+                            name: self.goods_combo.name,
+                            sort: self.goods_combo.sort,
                         })
                         .then(function(response) {
                             if (response.data.result == 'success') {
-                                self.$router.push({ path: '/goods_category' })
+                                self.$router.push({ path: '/goods_combo' })
                             }
                         })
                         .catch(function(error) {
@@ -122,24 +113,17 @@ export default {
     },
     created() {
         var self = this;
-        axios.post('/api/goods_category/get/id',{
+        axios.post('/api/goods_combo/get/id',{
             id:self.$route.params.id
         })
             .then(function(response) {
                 if (response.data.result == 'success') {
-                    console.log(response.data.data)
                     if (!response.data.data) {
                         self.$router.push({ path: '/error-500' })
                         return false;
                     }
 
-                    self.goods_category = response.data.data;
-                    if (self.goods_category.is_show == 1) {
-                        self.goods_category.is_show={ text: '是', value: '1'};
-                    }else{
-                        self.goods_category.is_show={ text: '否', value: '0'};
-                    }
-                    
+                    self.goods_combo = response.data.data;
                 }
             })
             .catch(function(error) {

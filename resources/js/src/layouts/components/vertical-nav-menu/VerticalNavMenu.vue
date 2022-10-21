@@ -25,9 +25,10 @@
                 <nav-menu-link title="倉儲管理" :to="{ name: 'change_inventory' }"></nav-menu-link>
                 <nav-menu-link title="庫存更動紀錄" :to="{ name: 'change_inventory_record' }"></nav-menu-link>
             </nav-menu-group>
-            <nav-menu-group title="發布商品設定" :icon="icons.mdiViewListOutline">
-                <nav-menu-link title="發布類別" :to="{ name: 'goods_category' }"></nav-menu-link>
-                <nav-menu-link title="發布商品" :to="{ name: 'goods' }"></nav-menu-link>
+            <nav-menu-group title="上架設定" :icon="icons.mdiViewListOutline">
+                <nav-menu-link title="類別設定" :to="{ name: 'goods_category' }"></nav-menu-link>
+                <nav-menu-link title="組合設定" :to="{ name: 'goods_combo' }"></nav-menu-link>
+                <nav-menu-link title="上架商品" :to="{ name: 'goods' }"></nav-menu-link>
             </nav-menu-group>
             <nav-menu-group title="一般設定" :icon="icons.mdiViewListOutline">
                 <nav-menu-link title="基本設定" :to="{ name: 'user' }"></nav-menu-link>

@@ -35,8 +35,22 @@ class ProductController extends Controller
             $search = $input['search'];
             $main = $main->Where(function ($query) use ($search) {
                         $query->orWhere('products.name', 'like', '%' . $search . '%');
+                        $query->orWhere('product_styles.name', 'like', '%' . $search . '%');
                     });
         }
+        //進階搜尋
+        $search_plus = $input['search_plus'];
+        $main = $main->Where(function ($query) use ($search_plus) {
+                    if (isset($search_plus['name'])) {
+                        $query = $query->Where('products.name', 'like', '%' . $search_plus['name'] . '%');
+                    }
+                    if (isset($search_plus['amount'])) {
+                        $query = $query->Where('product_styles.amount','<=',  $search_plus['amount'] )
+                        ->Where('product_styles.amount','<>',  -99 );
+                    }
+                });
+
+
 
         $main = $main->paginate($input['per_page']);
 
@@ -80,6 +94,14 @@ class ProductController extends Controller
                 return response()->json(['result' => 'success','data' => $data],200);
 
                 break;
+
+            case 'all':
+                $main = Product::where('store_id' , Auth::user()->store_id)->get();
+                
+                return response()->json(['result' => 'success','data' => $main],200);
+
+                break;
+
 
             default:
                 return response()->json(['result' => 'error' ],400);

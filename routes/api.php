@@ -64,3 +64,54 @@ Route::group([
 ], function () {
 	Route::post('/get/{action_type}', [ProductStyleController::class, 'get']);
 });
+
+
+use App\Http\Controllers\GoodsCategoryController;
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => '/goods_category'
+], function () {
+    Route::post('/index', [GoodsCategoryController::class, 'index']);
+    Route::post('/update/{action_type}', [GoodsCategoryController::class, 'update']);
+    Route::post('/insert', [GoodsCategoryController::class, 'insert']);
+    Route::post('/delete', [GoodsCategoryController::class, 'delete']);
+});
+Route::group([
+    'prefix' => '/goods_category'
+], function () {
+    Route::post('/get/{action_type}', [GoodsCategoryController::class, 'get']);
+});
+
+
+use App\Http\Controllers\GoodsComboController;
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => '/goods_combo'
+], function () {
+    Route::post('/index', [GoodsComboController::class, 'index']);
+    Route::post('/update/{action_type}', [GoodsComboController::class, 'update']);
+    Route::post('/insert', [GoodsComboController::class, 'insert']);
+    Route::post('/delete', [GoodsComboController::class, 'delete']);
+});
+Route::group([
+    'prefix' => '/goods_combo'
+], function () {
+    Route::post('/get/{action_type}', [GoodsComboController::class, 'get']);
+});
+
+
+use App\Http\Controllers\GoodsController;
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => '/goods'
+], function () {
+    Route::post('/index', [GoodsController::class, 'index']);
+    Route::post('/update/{action_type}', [GoodsController::class, 'update']);
+    Route::post('/insert', [GoodsController::class, 'insert']);
+    Route::post('/delete', [GoodsController::class, 'delete']);
+});
+Route::group([
+    'prefix' => '/goods'
+], function () {
+    Route::post('/get/{action_type}', [GoodsController::class, 'get']);
+});

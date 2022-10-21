@@ -41,9 +41,9 @@ const routes = [{
         path: '/product',
         name: 'product',
         component: () => import('@/views/product/Index.vue'),
-        // meta: {
-        //     keepAlive: true,
-        // },
+        meta: {
+            keepAlive: true,
+        },
     },
     {
         path: '/product/insert',
@@ -61,6 +61,81 @@ const routes = [{
         component: () => import('@/views/product/Get.vue'),
     },
 
+    //發布類別
+    {
+        path: '/goods_category',
+        name: 'goods_category',
+        component: () => import('@/views/goods_category/Index.vue'),
+        meta: {
+            keepAlive: true,
+        },
+    },
+    {
+        path: '/goods_category/insert',
+        name: 'goods_category-insert',
+        component: () => import('@/views/goods_category/Insert.vue'),
+    },
+    {
+        path: '/goods_category/update/:id',
+        name: 'goods_category-update',
+        component: () => import('@/views/goods_category/Update.vue'),
+    },
+    {
+        path: '/goods_category/get/:id',
+        name: 'goods_category-get',
+        component: () => import('@/views/goods_category/Get.vue'),
+    },
+
+    //發布商品
+    {
+        path: '/goods',
+        name: 'goods',
+        component: () => import('@/views/goods/Index.vue'),
+        meta: {
+            keepAlive: true,
+        },
+    },
+    {
+        path: '/goods/insert',
+        name: 'goods-insert',
+        component: () => import('@/views/goods/Insert.vue'),
+    },
+    {
+        path: '/goods/update/:id',
+        name: 'goods-update',
+        component: () => import('@/views/goods/Update.vue'),
+    },
+    {
+        path: '/goods/get/:id',
+        name: 'goods-get',
+        component: () => import('@/views/goods/Get.vue'),
+    },
+
+    //發布組合
+    {
+        path: '/goods_combo',
+        name: 'goods_combo',
+        component: () => import('@/views/goods_combo/Index.vue'),
+        meta: {
+            keepAlive: true,
+        },
+    },
+    {
+        path: '/goods_combo/insert',
+        name: 'goods_combo-insert',
+        component: () => import('@/views/goods_combo/Insert.vue'),
+    },
+    {
+        path: '/goods_combo/update/:id',
+        name: 'goods_combo-update',
+        component: () => import('@/views/goods_combo/Update.vue'),
+    },
+    {
+        path: '/goods_combo/get/:id',
+        name: 'goods_combo-get',
+        component: () => import('@/views/goods_combo/Get.vue'),
+    },
+    
     //登入
     {
         path: '/login',

@@ -24,6 +24,13 @@ class ProductStyleController extends Controller
 		        return response()->json(['result' => 'success','data' => $data ],200);
 
                 break;
+            case 'product_id':
+                $data = ProductStyle::where('store_id',Auth::user()->store_id)->where('product_id',$input['product_id'])->get();
+
+                return response()->json(['result' => 'success','data' => $data ],200);
+
+                break;
+
 
             default:
                 return response()->json(['result' => 'error' ],400);
