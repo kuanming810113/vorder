@@ -61,11 +61,9 @@
                         <v-form @submit.prevent="submit">
                             <v-card outlined shaped class="mb-3" outlined elevation="3" v-for="(item,key,index) in goods" :key="key">
                                 <v-card-title style="background-color: #F0F0F0;">
-      
                                     <p class="text--primary" style="font-size: 24px;"><b>{{item.combo_name}}</b></p>
                                     <v-spacer></v-spacer>
                                     <v-icon color="error" size="26" @click="deleteCombo(key)">{{ icons.mdiClose }}</v-icon>
-                            
                                 </v-card-title>
                                 <v-row class="pa-4" v-for="(item1,key1,index1) in item.product_data" :key="key1">
                                     <v-col cols="12" class="d-flex">
