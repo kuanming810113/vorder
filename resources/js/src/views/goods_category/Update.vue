@@ -25,7 +25,7 @@
                                     </validation-provider>
                                 </v-col>
                                 <v-col md="6" cols="12">
-                                    <v-select dense outlined v-model="goods_category.is_show" label="是否顯示" :items="is_show_items"></v-select>
+                                    <v-select dense outlined v-model="goods_category.is_show" label="是否顯示" :items="is_show_items" item-text="text" item-value="value"></v-select>
                                 </v-col>
                                 <v-col md="6" cols="12">
                                     <v-text-field type="number" dense outlined v-model="goods_category.sort" label="排序" hint="數字越大排越前面
@@ -101,7 +101,7 @@ export default {
                             id: self.$route.params.id,
                             name: self.goods_category.name,
                             sort: self.goods_category.sort,
-                            is_show: self.goods_category.is_show
+                            is_show: self.goods_category.is_show.value
                         })
                         .then(function(response) {
                             if (response.data.result == 'success') {

@@ -20,6 +20,9 @@
                 <template v-slot:item.name="{ item }">
                     <a href="javascript:void(0)" @click="getView(item.id)">{{item.name}}</a>
                 </template>
+                <template v-slot:item.product="{ item }">
+                    <a href="#">查看</a>
+                </template>
                 <template v-slot:item.is_show="{ item }">
                     <v-chip small :color="getColor(item.is_show)" v-if="item.is_show == '1'">是</v-chip>
                     <v-chip small :color="getColor(item.is_show)" v-if="item.is_show == '0'">否</v-chip>
@@ -108,6 +111,7 @@
             headers: [
                 { text: '流水號', value: 'sno', sortable: false },
                 { text: '上架名稱', value: 'name', sortable: true },
+                { text: '內含商品', value: 'product', sortable: false },
                 { text: '類別', value: 'goods_categories_name', sortable: false },
                 { text: '售價', value: 'price', sortable: false },
                 { text: '是否上架', value: 'is_show', sortable: true },

@@ -22,8 +22,6 @@ class GoodsController extends Controller
 
     	$main = Goods::select('goods.*','goods_categories.name as goods_categories_name')
     	->leftJoin('goods_categories', 'goods.goods_category_id', '=', 'goods_categories.id')
-    	// ->leftJoin('product_finish_maps', 'product_finish_maps.product_finish_id', '=', 'product_finishes.id')
-    	// ->leftJoin('products', 'product_finish_maps.product_id', '=', 'products.id')
     	->where('goods.store_id',Auth::user()->store_id)
     	->groupBy('goods.id')
     	->orderBy('goods.sort','desc')
@@ -35,6 +33,7 @@ class GoodsController extends Controller
             $search = $input['search'];
             $main = $main->Where(function ($query) use ($search) {
                         $query->orWhere('goods.name', 'like', '%' . $search . '%');
+                        $query->orWhere('goods.price', 'like', '%' . $search . '%');
                         $query->orWhere('goods_categories.name', 'like', '%' . $search . '%');
                     });
         }
@@ -55,28 +54,6 @@ class GoodsController extends Controller
                 });
 
         $main = $main->paginate(20);
-
-
-    	// foreach ($main as $key => $val) {
-    	// 	$product = ProductFinishMap::select('products.id','products.name','products.estimated_cost')
-    	// 	->leftJoin('products', 'products.id', '=', 'product_finish_maps.product_id')
-    	// 	->where('product_finish_maps.user_id',Auth::id())
-    	// 	->where('product_finish_maps.product_finish_id',$val['id'])
-     //        ->groupBy('products.id')
-    	// 	->get()->toArray();
-    	
-    	// 	$main[$key]['product'] = $product;
-
-     //        //狀態 : 有無缺貨
-     //        $main[$key]['product_style_amount'] = ProductFinishMap::select('*')
-     //        ->leftJoin('product_styles', 'product_styles.product_id', '=', 'product_finish_maps.product_id')
-     //        ->where('product_finish_maps.user_id',Auth::id())
-     //        ->where('product_finish_maps.product_finish_id',$val['id'])
-     //        ->where('product_styles.amount','<=', 0)
-     //        ->where('product_styles.amount','<>', -99)
-     //        ->groupBy('product_styles.id')
-     //        ->count();
-    	// }
 
     	$data['all'] = $main;
 
