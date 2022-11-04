@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\GoodsCombo;
+use App\Models\GoodsProductStyleMap;
 
 use Auth;
 use DB;
@@ -171,6 +172,12 @@ class GoodsComboController extends Controller
 
         if ($validator->fails()) {
             return response()->json(['result' => 'validator_error','data' => $validator->errors()->all()] , 400);
+        }
+
+        $check = GoodsProductStyleMap::where('store_id',Auth::user()->store_id)->where('goods_combo_id',$input['id'])->count();
+
+        if($check > 0){
+            return response()->json(['result' => 'goods_exist'],400);
         }
 
 	    GoodsCombo::where('store_id',Auth::user()->store_id)->where('id',$input['id'])->delete();

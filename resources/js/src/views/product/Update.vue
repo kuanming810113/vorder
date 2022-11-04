@@ -98,6 +98,9 @@
                 </v-btn>
             </template>
         </v-snackbar>
+        <v-overlay :value="overlay">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
 
     </div>
 </template>
@@ -137,6 +140,8 @@ export default {
                     href: window.location.pathname + window.location.search,
                 },
             ],
+            overlay: true,
+
             tabNum: 0,
             tabs: [
                 { title: '基本設定' },
@@ -242,12 +247,9 @@ export default {
         })
             .then(function(response) {
                 if (response.data.result == 'success') {
-                    if (!response.data.data.product) {
-                        self.$router.push({ path: '/error-500' })
-                        return false;
-                    }
                     self.product = response.data.data.product;
                     self.style = response.data.data.product_style;
+                    self.overlay = false;
                 }
             })
             .catch(function(error) {

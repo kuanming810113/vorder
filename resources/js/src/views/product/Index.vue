@@ -52,6 +52,11 @@
                                     <v-col cols="12">
                                         <v-text-field type="number" label="各樣式的數量小於" v-model="searchPlus.amount"></v-text-field>
                                     </v-col>
+                                    <v-col cols="12">
+                                        <v-autocomplete v-model="searchPlus.goods" item-text="name" item-value="id" :items="goods_all" label="上架名稱">
+                                        </v-autocomplete>
+                                    </v-col>
+
                                 </v-row>
                             </v-container>
                         </v-form>
@@ -76,6 +81,15 @@
                 </v-card>
             </v-dialog>
         </v-row>
+        <v-snackbar v-model="snackbar" :multi-line="true">
+            {{ snackbar_text }}
+            <template v-slot:action="{ attrs }">
+                <v-btn color="error" text v-bind="attrs" @click="snackbar = false">
+                    Close
+                </v-btn>
+            </template>
+        </v-snackbar>
+
     </div>
 </template>
 <script>
@@ -106,7 +120,6 @@
                 { text: '流水號', value: 'sno', sortable: false },
                 { text: '商品名稱', value: 'name', sortable: true },
                 { text: '樣式', value: 'product_style', sortable: false },
-                { text: '上架商品數量', value: 'goods_amount', sortable: false },
                 { text: '創建日期', value: 'created_at', sortable: true },
                 { text: '功能', value: 'tool', sortable: false },
             ],
@@ -115,14 +128,18 @@
             perPage: 20,
             options: {},
             loading: true,
+            snackbar: false,
+            snackbar_text: ``,
             search: null,
             searchPlus:{
                 name: null,
                 amount: null,
+                goods:null
             },
             searchPlusActive:false,
             seachDialog: false,
 
+            goods_all:[],
             list: [],
         }
     },
@@ -150,7 +167,7 @@
             var self = this;
             self.seachDialog = false
             self.getData()
-            if (self.searchPlus.name || self.searchPlus.amount) {
+            if (self.searchPlus.name || self.searchPlus.amount || self.searchPlus.goods) {
                 self.searchPlusActive = true;
             }else{
                 self.searchPlusActive = false;
@@ -177,6 +194,12 @@
                     }
                 })
                 .catch(function (error) {
+                    if (error.response.data.result == 'goods_exist') {
+                        self.snackbar = true;
+                        self.snackbar_text = '此商品已上架,請先到上架頁面做刪除 ! ';
+                        return false;
+                    }
+
                     self.$router.push({ path: '/error-500' })
                 });
             }  
@@ -216,7 +239,17 @@
         self.getData();
     },
     created() {
-
+        var self = this;
+        axios.post('/api/goods/get/all')
+            .then(function(response) {
+                if (response.data.result == 'success') {
+                    var data = response.data.data;
+                    self.goods_all = data;
+                }
+            })
+            .catch(function(error) {
+                self.$router.push({ path: '/error-500' })
+            });
     }
 }
 

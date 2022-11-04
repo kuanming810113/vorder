@@ -25,7 +25,9 @@ class ProductStyleController extends Controller
 
                 break;
             case 'product_id':
-                $data = ProductStyle::where('store_id',Auth::user()->store_id)->where('product_id',$input['product_id'])->get();
+                $data['product_data'] = Product::where('store_id',Auth::user()->store_id)->where('id',$input['product_id'])->first();
+                $data['product_style'] = ProductStyle::where('store_id',Auth::user()->store_id)->where('product_id',$input['product_id'])->get();
+                
 
                 return response()->json(['result' => 'success','data' => $data ],200);
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+use App\Models\GoodsProductStyleMap;
 use App\Models\Product;
 use App\Models\ProductStyle;
 
@@ -20,6 +21,7 @@ class ProductController extends Controller
 
     	$main = Product::select('products.*')
         ->leftJoin('product_styles', 'product_styles.product_id', '=', 'products.id')
+        ->leftJoin('goods_product_style_maps', 'goods_product_style_maps.product_style_id', '=', 'product_styles.id')
         ->groupBy('products.id')
         ->where('products.store_id' , Auth::user()->store_id);
 
@@ -48,6 +50,10 @@ class ProductController extends Controller
                         $query = $query->Where('product_styles.amount','<=',  $search_plus['amount'] )
                         ->Where('product_styles.amount','<>',  -99 );
                     }
+                    if (isset($search_plus['goods'])) {
+                         $query = $query->Where('goods_product_style_maps.goods_id', $search_plus['goods'] );
+                    }
+
                 });
 
 
@@ -239,6 +245,12 @@ class ProductController extends Controller
 
         try {
             DB::beginTransaction();
+
+            $check = GoodsProductStyleMap::where('store_id',Auth::user()->store_id)->where('product_id',$input['id'])->count();
+
+            if($check > 0){
+                return response()->json(['result' => 'goods_exist'],400);
+            }
 
 	        Product::where('store_id',Auth::user()->store_id)->where('id',$input['id'])->delete();
 	        ProductStyle::where('store_id',Auth::user()->store_id)->where('product_id',$input['id'])->delete();

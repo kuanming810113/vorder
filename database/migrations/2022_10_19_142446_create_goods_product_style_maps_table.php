@@ -21,7 +21,6 @@ return new class extends Migration
             $table->integer('product_style_id')->comment('商品樣式id');
             $table->integer('goods_combo_id')->comment('組合id');
             $table->integer('extra_price')->default(0)->comment('加價金額');
-            $table->integer('sort')->default(1)->comment('商品排序');
             $table->timestamps();
         });
     }

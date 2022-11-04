@@ -20,8 +20,8 @@
                         <v-form @submit.prevent="submit">
                             <v-row>
                                 <v-col md="6" cols="12">
-                                    <validation-provider v-slot="{ errors }" name="上架商品名稱*" rules="required">
-                                        <v-text-field v-model="basic.name" dense outlined :error-messages="errors" label="上架商品名稱*"></v-text-field>
+                                    <validation-provider v-slot="{ errors }" name="上架名稱*" rules="required">
+                                        <v-text-field v-model="basic.name" dense outlined :error-messages="errors" label="上架名稱*"></v-text-field>
                                     </validation-provider>
                                 </v-col>
                                 <v-col md="6" cols="12">
@@ -41,11 +41,14 @@
                                     </validation-provider>
                                 </v-col>
                                 <v-col md="6" cols="12">
-                                    <v-select dense outlined v-model="basic.is_show" label="是否上架" :items="is_show_items"></v-select>
+                                    <v-select dense outlined v-model="basic.is_show" label="是否上架" :items="is_show_items" item-text="text" item-value="value"></v-select>
                                 </v-col>
                                 <v-col md="6" cols="12">
                                     <v-text-field type="number" dense outlined v-model="basic.sort" label="排序" hint="數字越大排越前面
                                     "></v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-textarea dense outlined v-model="basic.remark" label="備註"></v-textarea>
                                 </v-col>
                                 <v-col cols="12" class="d-flex justify-end">
                                     <v-btn class="mt-5" @click="tabNum++">
@@ -59,46 +62,93 @@
                 <v-tab-item class="pa-6 mt-6">
                     <validation-observer ref="style_observer">
                         <v-form @submit.prevent="submit">
-                            <v-card outlined shaped class="mb-3" outlined elevation="3" v-for="(item,key,index) in goods" :key="key">
-                                <v-card-title style="background-color: #F0F0F0;">
-                                    <p class="text--primary" style="font-size: 24px;"><b>{{item.combo_name}}</b></p>
-                                    <v-spacer></v-spacer>
-                                    <v-icon color="error" size="26" @click="deleteCombo(key)">{{ icons.mdiClose }}</v-icon>
-                                </v-card-title>
-                                <v-row class="pa-4" v-for="(item1,key1,index1) in item.product_data" :key="key1">
-                                    <v-col cols="12" class="d-flex">
-                                        <v-chip small label class=" mr-auto" color="primary">{{key1+1}}</v-chip>
-                                        <v-icon color="error" size="26" @click="deleteProduct(key,key1)">{{ icons.mdiTrashCanOutline }}</v-icon>
-                                    </v-col>
-                                    <v-col md="12" cols="12">
-                                        <validation-provider v-slot="{ errors }" name="商品名稱*" rules="required">
-                                            <v-autocomplete v-model="item1.product_id" @change="addProductStyle(key,key1)" item-text="name" item-value="id" :items="product_all" :error-messages="errors" label="商品名稱*" dense outlined></v-autocomplete>
-                                        </validation-provider>
-                                    </v-col>
-                                    <v-container>
-                                        <v-row v-for="(item2,key2,index2) in item1.product_style" :key="key2">
-                                            <v-col md="6" cols="6">
-                                                <validation-provider v-slot="{ errors }" name="樣式名稱*" rules="required">
-                                                    <v-text-field type="text" v-model="item2.name" dense outlined :error-messages="errors" label="樣式名稱*" filled readonly></v-text-field>
-                                                </validation-provider>
-                                            </v-col>
-                                            <v-col md="6" cols="6">
-                                                <validation-provider v-slot="{ errors }" name="加價*" rules="required">
-                                                    <v-text-field type="number" v-model="item2.extra_price" dense outlined :error-messages="errors" label="加價*"></v-text-field>
-                                                </validation-provider>
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
-                                </v-row>
-                                <v-btn color="info" class="ma-5 mr-auto" @click="addProduct(key)">
-                                     <v-icon>{{ icons.mdiPlus }}</v-icon> 商品
-                                </v-btn>
-                            </v-card>
+                            <v-expansion-panels focusable multiple>
+                                <draggable v-model="goods" style="width: 100%;">
+                                    <v-expansion-panel v-for="(item,key,index) in goods" :key="key">
+                                        <v-expansion-panel-header>
+                                            <div class="text-h5">
+                                                <v-icon>
+                                                    {{ icons.mdiDragHorizontal }}
+                                                </v-icon> {{item.combo_name}}
+                                            </div>
+                                        </v-expansion-panel-header>
+                                        <v-expansion-panel-content>
+                                            <v-row>
+                                                <v-col class="text-end mb-3">
+                                                    <v-chip color="error" @click="deleteCombo(key)">
+                                                        組合
+                                                        <v-icon right>{{icons.mdiClose}}</v-icon>
+                                                    </v-chip>
+                                                </v-col>
+                                            </v-row>
+                                            <v-expansion-panels focusable>
+                                                <draggable v-model="item.product_data" style="width: 100%;">
+                                                    <v-expansion-panel v-for="(item1,key1,index1) in item.product_data" :key="key1">
+                                                        <v-expansion-panel-header color="#F1E1FF">
+                                                            <div class="text-h6">
+                                                                <v-icon>
+                                                                    {{ icons.mdiDragHorizontalVariant }}
+                                                                </v-icon>
+                                                                {{item1.product_name}}
+                                                            </div>
+                                                        </v-expansion-panel-header>
+                                                        <v-expansion-panel-content>
+                                                            <v-row>
+                                                                <v-col class="text-end">
+                                                                    <v-chip color="error" @click="deleteProduct(key,key1)">
+                                                                        商品
+                                                                        <v-icon right>{{icons.mdiClose}}</v-icon>
+                                                                    </v-chip>
+                                                                </v-col>
+                                                            </v-row>
+                                                            <v-container>
+                                                                <v-row v-for="(item2,key2,index2) in item1.product_style" :key="key2">
+                                                                    <v-col md="6" cols="6">
+                                                                        <validation-provider v-slot="{ errors }" name="樣式名稱*" rules="required">
+                                                                            <v-text-field type="text" v-model="item2.name" dense outlined :error-messages="errors" label="樣式名稱*" filled readonly></v-text-field>
+                                                                        </validation-provider>
+                                                                    </v-col>
+                                                                    <v-col md="6" cols="6">
+                                                                        <validation-provider v-slot="{ errors }" name="加價*" rules="required">
+                                                                            <v-text-field type="number" v-model="item2.extra_price" dense outlined :error-messages="errors" label="加價*"></v-text-field>
+                                                                        </validation-provider>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </v-container>
+                                                        </v-expansion-panel-content>
+                                                    </v-expansion-panel>
+                                                </draggable>
+                                            </v-expansion-panels>
+                                            <v-expansion-panels :readonly="true">
+                                                <v-expansion-panel class="mt-5">
+                                                    <v-expansion-panel-header disable-icon-rotate @click="showProductDialog(key)" color="#F1E1FF">
+                                                        <div>新增商品</div>
+                                                        <template v-slot:actions>
+                                                            <v-icon color="info">
+                                                                {{ icons.mdiPlusCircle }}
+                                                            </v-icon>
+                                                        </template>
+                                                    </v-expansion-panel-header>
+                                                </v-expansion-panel>
+                                            </v-expansion-panels>
+                                        </v-expansion-panel-content>
+                                    </v-expansion-panel>
+                                </draggable>
+                            </v-expansion-panels>
+                            <v-expansion-panels :readonly="true">
+                                <v-expansion-panel class="mt-5">
+                                    <v-expansion-panel-header disable-icon-rotate @click="comboDialog = true">
+                                        新增組合
+                                        <template v-slot:actions>
+                                            <v-icon color="info">
+                                                {{ icons.mdiPlusCircle }}
+                                            </v-icon>
+                                        </template>
+                                    </v-expansion-panel-header>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
                             <v-row>
-                                <v-col cols="12" class="d-flex">
-                                    <v-btn color="info" class="mt-5 mr-auto" @click="comboDialog = true">
-                                        <v-icon>{{ icons.mdiPlus }}</v-icon> 組合
-                                    </v-btn>
+                                <v-col cols="12" class="d-flex justify-end">
                                     <v-btn color="primary" class="mt-5" @click="insertData">
                                         送出
                                     </v-btn>
@@ -132,6 +182,19 @@
                                             </validation-provider>
                                         </v-col>
                                     </v-row>
+                                    <v-row>
+                                        <v-col cols="12">
+                                            <validation-provider v-slot="{ errors }" name="商品名稱*" rules="required">
+                                                <v-autocomplete v-model="product_id" item-text="name" item-value="id" :items="product_all" :error-messages="errors" label="商品名稱*" dense outlined>
+                                                    <template v-slot:append-outer>
+                                                        <v-icon color="info" @click="productInsertView()" title="新增商品">
+                                                            {{ icons.mdiPlusCircle }}
+                                                        </v-icon>
+                                                    </template>
+                                                </v-autocomplete>
+                                            </validation-provider>
+                                        </v-col>
+                                    </v-row>
                                 </v-container>
                             </v-form>
                         </validation-observer>
@@ -151,6 +214,48 @@
                 </v-card>
             </v-dialog>
         </v-row>
+        <v-row justify="center">
+            <v-dialog v-model="productDialog" persistent max-width="600px">
+                <v-card>
+                    <v-card-title>
+                        <span class="text-h5">新增商品</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <validation-observer ref="product_observer">
+                            <v-form>
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="12">
+                                            <validation-provider v-slot="{ errors }" name="商品名稱*" rules="required">
+                                                <v-autocomplete v-model="product_id" item-text="name" item-value="id" :items="product_all" :error-messages="errors" label="商品名稱*" dense outlined>
+                                                    <template v-slot:append-outer>
+                                                        <v-icon color="info" @click="productInsertView()" title="新增商品">
+                                                            {{ icons.mdiPlusCircle }}
+                                                        </v-icon>
+                                                    </template>
+                                                </v-autocomplete>
+                                            </validation-provider>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-form>
+                        </validation-observer>
+                    </v-card-text>
+                    <v-container>
+                        <v-row class="pr-3 pl-3">
+                            <v-col cols='12' class="pb-5 d-flex justify-end">
+                                <v-btn class="mr-3" @click="productDialog = false">
+                                    關閉
+                                </v-btn>
+                                <v-btn color="primary" @click="addProduct()">
+                                    送出
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card>
+            </v-dialog>
+        </v-row>
         <v-snackbar v-model="snackbar" :multi-line="true">
             {{ snackbar_text }}
             <template v-slot:action="{ attrs }">
@@ -159,7 +264,6 @@
                 </v-btn>
             </template>
         </v-snackbar>
-
     </div>
 </template>
 <script>
@@ -167,13 +271,15 @@ import { ValidationProvider, ValidationObserver, localize, extend } from 'vee-va
 import tw from "vee-validate/dist/locale/zh_TW.json";
 localize("zh_TW", tw);
 
-import { mdiPlusCircle, mdiClose,mdiPlus,mdiTrashCanOutline } from "@mdi/js";
+import { mdiPlusCircle, mdiClose, mdiPlus, mdiDragHorizontal, mdiDragHorizontalVariant } from "@mdi/js";
+import draggable from 'vuedraggable'
 
 export default {
 
     components: {
         ValidationProvider,
         ValidationObserver,
+        draggable,
     },
     setup() {
         return {
@@ -181,7 +287,8 @@ export default {
                 mdiPlusCircle,
                 mdiClose,
                 mdiPlus,
-                mdiTrashCanOutline
+                mdiDragHorizontal,
+                mdiDragHorizontalVariant
             },
         }
     },
@@ -193,7 +300,7 @@ export default {
                     href: '',
                 },
                 {
-                    text: '上架商品',
+                    text: '上架',
                     href: '/goods',
                 },
                 {
@@ -211,19 +318,25 @@ export default {
             snackbar_text: ``,
 
             comboDialog: false,
+            productDialog: false,
 
             is_show_items: [
-                { text: '是', value: '1' },
-                { text: '否', value: '0' },
+                { text: '是', value: 1 },
+                { text: '否', value: 0 },
             ],
 
             basic: {
                 name: '',
                 goods_category_id: '',
                 price: '',
-                is_show: '1',
+                is_show: 1,
                 sort: '1',
+                remark: '',
             },
+
+            product_id: '',
+            addProductKey: '',
+
             goods: [],
 
             goods_combo: [],
@@ -247,7 +360,7 @@ export default {
                             }
 
                             axios.post('/api/goods/insert', {
-                                    basic:self.basic,
+                                    basic: self.basic,
                                     goods: self.goods,
                                 })
                                 .then(function(response) {
@@ -278,19 +391,50 @@ export default {
             var self = this;
             self.$router.push({ path: '/goods_category/insert' })
         },
+        productInsertView() {
+            var self = this;
+            self.$router.push({ path: '/product/insert' })
+        },
         addCombo() {
             var self = this;
 
             self.$refs.combo_observer.validate().then(success => {
                 if (success) {
-                    self.goods.push({
-                        combo_id: self.goods_combo.value,
-                        combo_name: self.goods_combo.text,
-                        product_data: [{
-                            product_id: '',
-                            product_style: []
-                        }]
-                    })
+                    for(var key in self.goods){
+                        if (self.goods[key].combo_id == self.goods_combo.value) {
+                            self.snackbar = true;
+                            self.snackbar_text = '已有此組合 !';
+                            return false;
+                        }
+                    }
+
+                    axios.post('/api/product_style/get/product_id', {
+                            product_id: self.product_id
+                        })
+                        .then(function(response) {
+                            if (response.data.result == 'success') {
+                                var data = response.data.data;
+
+                                var result = {
+                                    product_name: data.product_data.name,
+                                    product_id: data.product_data.id,
+                                    product_style: []
+                                };
+
+                                for (var k in data.product_style) {
+                                    result.product_style.push({ id: data.product_style[k].id, name: data.product_style[k].name, extra_price: 0 });
+                                }
+
+                                self.goods.push({
+                                    combo_id: self.goods_combo.value,
+                                    combo_name: self.goods_combo.text,
+                                    product_data: [result]
+                                })
+                            }
+                        })
+                        .catch(function(error) {
+                            self.$router.push({ path: '/error-500' })
+                        });
                     self.comboDialog = false
                 }
             })
@@ -302,47 +446,63 @@ export default {
                 self.snackbar_text = '至少包含一個組合 ! ';
                 return false;
             }
+            if (confirm('確定要刪除整個組合嗎 ? ')) {
+                self.goods.splice(key, 1)
+            }
 
-            self.goods.splice(key, 1)
         },
 
-        addProduct(key){
+        showProductDialog(key) {
             var self = this;
-            self.goods[key].product_data.push({
-                product_id: '',
-                product_style: []
-            });
+            self.productDialog = true;
+            self.addProductKey = key;
         },
-        deleteProduct(key,key1){
+        addProduct() {
+            var self = this;
+
+            self.$refs.product_observer.validate().then(success => {
+                if (success) {
+                    axios.post('/api/product_style/get/product_id', {
+                            product_id: self.product_id
+                        })
+                        .then(function(response) {
+                            if (response.data.result == 'success') {
+                                var data = response.data.data;
+
+                                var result = {
+                                    product_name: data.product_data.name,
+                                    product_id: data.product_data.id,
+                                    product_style: []
+                                };
+
+                                for (var k in data.product_style) {
+                                    result.product_style.push({ id: data.product_style[k].id, name: data.product_style[k].name, extra_price: 0 });
+                                }
+
+                                self.goods[self.addProductKey].product_data.push(result);
+
+
+                            }
+                        })
+                        .catch(function(error) {
+                            self.$router.push({ path: '/error-500' })
+                        });
+
+                    self.productDialog = false
+                }
+            })
+        },
+        deleteProduct(key, key1) {
             var self = this;
             if (self.goods[key].product_data.length <= 1) {
                 self.snackbar = true;
                 self.snackbar_text = '至少包含一個商品 ! ';
                 return false;
             }
-            self.goods[key].product_data.splice(key1, 1)
+            if (confirm('確定要刪除此商品嗎 ? ')) {
+                self.goods[key].product_data.splice(key1, 1)
+            }
         },
-
-        addProductStyle(key, key1) {
-            var self = this;
-            axios.post('/api/product_style/get/product_id', {
-                    product_id: self.goods[key].product_data[key1].product_id
-                })
-                .then(function(response) {
-                    if (response.data.result == 'success') {
-                        var data = response.data.data;
-                        self.goods[key].product_data[key1].product_style = [];
-                        for (var k in data) {
-                            self.goods[key].product_data[key1].product_style.push(
-                                { id : data[k].id ,name : data[k].name ,extra_price : 0 }
-                            );
-                        }
-                    }
-                })
-                .catch(function(error) {
-                    self.$router.push({ path: '/error-500' })
-                });
-        }
     },
     created() {
         var self = this;
@@ -383,7 +543,6 @@ export default {
             .catch(function(error) {
                 self.$router.push({ path: '/error-500' })
             });
-
 
     },
 }

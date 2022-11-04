@@ -66,6 +66,15 @@
                 </v-card>
             </v-dialog>
         </v-row>
+        <v-snackbar v-model="snackbar" :multi-line="true">
+            {{ snackbar_text }}
+            <template v-slot:action="{ attrs }">
+                <v-btn color="error" text v-bind="attrs" @click="snackbar = false">
+                    Close
+                </v-btn>
+            </template>
+        </v-snackbar>
+
     </div>
 </template>
 <script>
@@ -104,6 +113,8 @@
             perPage: 20,
             options: {},
             loading: true,
+            snackbar: false,
+            snackbar_text: ``,
             search: null,
             searchPlus:{
                 name: null,
@@ -167,6 +178,13 @@
                     }
                 })
                 .catch(function (error) {
+                    if (error.response.data.result == 'goods_exist') {
+                        self.snackbar = true;
+                        self.snackbar_text = '此組合內有上架,請先到上架頁面做刪除 ! ';
+                        return false;
+                    }
+
+
                     self.$router.push({ path: '/error-500' })
                 });
             }  

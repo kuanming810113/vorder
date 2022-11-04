@@ -2,17 +2,11 @@
     <div>
         <v-card class="mb-2">
             <v-breadcrumbs :items="breadcrumbs">
-                <v-breadcrumbs-item
-                    slot="item"
-                    slot-scope="{ item }"
-                    exact
-                    exact-active-class="info--text"
-                    :to="item.href">
+                <v-breadcrumbs-item slot="item" slot-scope="{ item }" exact exact-active-class="info--text" :to="item.href">
                     {{ item.text }}
                 </v-breadcrumbs-item>
             </v-breadcrumbs>
         </v-card>
-
         <v-card>
             <!-- tabs -->
             <v-tabs v-model="tabNum" show-arrows>
@@ -45,10 +39,12 @@
                 </v-tab-item>
             </v-tabs-items>
         </v-card>
+        <v-overlay :value="overlay">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </div>
 </template>
 <script>
-
 import { ValidationProvider, ValidationObserver, localize, extend } from 'vee-validate/dist/vee-validate.full.esm';
 import tw from "vee-validate/dist/locale/zh_TW.json";
 localize("zh_TW", tw);
@@ -75,6 +71,7 @@ export default {
                     href: window.location.pathname + window.location.search,
                 },
             ],
+            overlay: true,
             tabNum: 0,
             tabs: [
                 { title: '基本設定' },
@@ -91,7 +88,7 @@ export default {
             self.$refs.basic_observer.validate().then(success => {
                 if (success) {
                     axios.post('/api/goods_combo/update/id', {
-                            id:self.$route.params.id,
+                            id: self.$route.params.id,
                             name: self.goods_combo.name,
                             sort: self.goods_combo.sort,
                         })
@@ -113,22 +110,18 @@ export default {
     },
     created() {
         var self = this;
-        axios.post('/api/goods_combo/get/id',{
-            id:self.$route.params.id
-        })
+        axios.post('/api/goods_combo/get/id', {
+                id: self.$route.params.id
+            })
             .then(function(response) {
                 if (response.data.result == 'success') {
-                    if (!response.data.data) {
-                        self.$router.push({ path: '/error-500' })
-                        return false;
-                    }
-
                     self.goods_combo = response.data.data;
+                    self.overlay = false;
                 }
             })
             .catch(function(error) {
                 self.$router.push({ path: '/error-500' })
-            });  
+            });
     },
 }
 

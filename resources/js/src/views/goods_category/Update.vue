@@ -2,17 +2,11 @@
     <div>
         <v-card class="mb-2">
             <v-breadcrumbs :items="breadcrumbs">
-                <v-breadcrumbs-item
-                    slot="item"
-                    slot-scope="{ item }"
-                    exact
-                    exact-active-class="info--text"
-                    :to="item.href">
+                <v-breadcrumbs-item slot="item" slot-scope="{ item }" exact exact-active-class="info--text" :to="item.href">
                     {{ item.text }}
                 </v-breadcrumbs-item>
             </v-breadcrumbs>
         </v-card>
-
         <v-card>
             <!-- tabs -->
             <v-tabs v-model="tabNum" show-arrows>
@@ -48,10 +42,12 @@
                 </v-tab-item>
             </v-tabs-items>
         </v-card>
+        <v-overlay :value="overlay">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </div>
 </template>
 <script>
-
 import { ValidationProvider, ValidationObserver, localize, extend } from 'vee-validate/dist/vee-validate.full.esm';
 import tw from "vee-validate/dist/locale/zh_TW.json";
 localize("zh_TW", tw);
@@ -78,13 +74,16 @@ export default {
                     href: window.location.pathname + window.location.search,
                 },
             ],
+            overlay: true,
+
+
             tabNum: 0,
             tabs: [
                 { title: '基本設定' },
             ],
-            is_show_items:[
-                { text: '是', value: '1'},
-                { text: '否', value: '0'},
+            is_show_items: [
+                { text: '是', value: '1' },
+                { text: '否', value: '0' },
             ],
             goods_category: {
                 name: '',
@@ -99,7 +98,7 @@ export default {
             self.$refs.basic_observer.validate().then(success => {
                 if (success) {
                     axios.post('/api/goods_category/update/id', {
-                            id:self.$route.params.id,
+                            id: self.$route.params.id,
                             name: self.goods_category.name,
                             sort: self.goods_category.sort,
                             is_show: self.goods_category.is_show
@@ -122,29 +121,25 @@ export default {
     },
     created() {
         var self = this;
-        axios.post('/api/goods_category/get/id',{
-            id:self.$route.params.id
-        })
+        axios.post('/api/goods_category/get/id', {
+                id: self.$route.params.id
+            })
             .then(function(response) {
                 if (response.data.result == 'success') {
-                    console.log(response.data.data)
-                    if (!response.data.data) {
-                        self.$router.push({ path: '/error-500' })
-                        return false;
-                    }
-
                     self.goods_category = response.data.data;
+
                     if (self.goods_category.is_show == 1) {
-                        self.goods_category.is_show={ text: '是', value: '1'};
-                    }else{
-                        self.goods_category.is_show={ text: '否', value: '0'};
+                        self.goods_category.is_show = { text: '是', value: '1' };
+                    } else {
+                        self.goods_category.is_show = { text: '否', value: '0' };
                     }
-                    
+                    self.overlay = false;
+
                 }
             })
             .catch(function(error) {
                 self.$router.push({ path: '/error-500' })
-            });  
+            });
     },
 }
 

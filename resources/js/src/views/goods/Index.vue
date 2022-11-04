@@ -45,11 +45,16 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12">
-                                        <v-text-field label="商品名稱" v-model="searchPlus.name"></v-text-field>
+                                        <v-text-field label="上架名稱" v-model="searchPlus.name"></v-text-field>
                                     </v-col>
                                     <v-col cols="12">
-                                        <v-text-field type="number" label="各樣式的數量小於" v-model="searchPlus.amount"></v-text-field>
+                                        <v-select type="number" v-model="searchPlus.goods_category" label="發布類別" :items="goods_category_all">
+                                        </v-select>
                                     </v-col>
+                                    <v-col cols="12">
+                                        <v-select v-model="searchPlus.is_show" label="是否上架" :items="is_show_items"></v-select>
+                                    </v-col>
+
                                 </v-row>
                             </v-container>
                         </v-form>
@@ -96,17 +101,17 @@
                     href: '',
                 },
                 {
-                    text: '上架商品',
+                    text: '上架',
                     href: window.location.pathname + window.location.search,
                 },
             ],
             headers: [
                 { text: '流水號', value: 'sno', sortable: false },
-                { text: '上架商品名稱', value: 'name', sortable: true },
+                { text: '上架名稱', value: 'name', sortable: true },
                 { text: '類別', value: 'goods_categories_name', sortable: false },
                 { text: '售價', value: 'price', sortable: false },
-                { text: '是否上架', value: 'is_show', sortable: false },
-                { text: '排序', value: 'sort', sortable: false },
+                { text: '是否上架', value: 'is_show', sortable: true },
+                { text: '排序', value: 'sort', sortable: true },
                 { text: '創建日期', value: 'created_at', sortable: true },
                 { text: '功能', value: 'tool', sortable: false },
             ],
@@ -118,11 +123,17 @@
             search: null,
             searchPlus:{
                 name: null,
-                amount: null,
+                goods_category: null,
+                is_show: null,
             },
+            is_show_items: [
+                { text: '是', value: 1 },
+                { text: '否', value: 0 },
+            ],
+
             searchPlusActive:false,
             seachDialog: false,
-
+            goods_category_all:[],
             list: [],
         }
     },
@@ -216,7 +227,19 @@
         self.getData();
     },
     created() {
-
+        var self = this;
+        axios.post('/api/goods_category/get/all')
+            .then(function(response) {
+                if (response.data.result == 'success') {
+                    var data = response.data.data;
+                    for (var k in data) {
+                        self.goods_category_all.push({ text: data[k].name, value: data[k].id });
+                    }
+                }
+            })
+            .catch(function(error) {
+                self.$router.push({ path: '/error-500' })
+            });
     }
 }
 

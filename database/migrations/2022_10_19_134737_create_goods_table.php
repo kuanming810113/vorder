@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('price')->comment('價格');
             $table->boolean('is_show')->default(true)->comment('上下架');
             $table->integer('sort')->default(1)->comment('排序');
+            $table->text('remark')->nullable()->comment('備註');
             $table->timestamps();
         });
     }

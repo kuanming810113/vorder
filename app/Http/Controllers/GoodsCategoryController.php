@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\GoodsCategory;
-
+use App\Models\Goods;
 use Auth;
 use DB;
 
@@ -178,6 +178,12 @@ class GoodsCategoryController extends Controller
 
         if ($validator->fails()) {
             return response()->json(['result' => 'validator_error','data' => $validator->errors()->all()] , 400);
+        }
+
+        $check = Goods::where('store_id',Auth::user()->store_id)->where('goods_category_id',$input['id'])->count();
+
+        if($check > 0){
+            return response()->json(['result' => 'goods_exist'],400);
         }
 
 	    GoodsCategory::where('store_id',Auth::user()->store_id)->where('id',$input['id'])->delete();

@@ -31,39 +31,28 @@ class GoodsController extends Controller
 
 
         //全局搜尋
-        // if (isset($input['search_global_text'])) {
-        //     $search = $input['search_global_text'];
-        //     $main = $main->Where(function ($query) use ($search) {
-        //                 $query->orWhere('product_types.name', 'like', '%' . $search . '%')
-        //                       ->orWhere('product_finishes.name', 'like', '%' . $search . '%')
-        //                       ->orWhere('products.name', 'like', '%' . $search . '%');
-        //             });
-        // }
+        if (isset($input['search'])) {
+            $search = $input['search'];
+            $main = $main->Where(function ($query) use ($search) {
+                        $query->orWhere('goods.name', 'like', '%' . $search . '%');
+                        $query->orWhere('goods_categories.name', 'like', '%' . $search . '%');
+                    });
+        }
+
 
         //進階搜尋
-        // if(isset($input['search_plus'])){
-        //     $search_arr = [
-        //         'product_type_id'=>$input['product_type_id'] ?? null,
-        //         'product_id'=>$input['product_id'] ?? null,
-        //         'name'=>$input['name'] ?? null,
-        //         'is_show'=>$input['is_show'] ?? null,
-        //     ];
-
-        //     $main = $main->Where(function ($query) use ($search_arr) {
-        //                 if (isset($search_arr['product_type_id'])) {
-        //                     $query = $query->Where('product_finishes.product_type_id',  $search_arr['product_type_id'] );
-        //                 }
-        //                 if (isset($search_arr['product_id'])) {
-        //                     $query = $query->Where('product_finish_maps.product_id',  $search_arr['product_id'] );
-        //                 }
-        //                 if (isset($search_arr['name'])) {
-        //                     $query = $query->Where('product_finishes.name',  $search_arr['name'] );
-        //                 }
-        //                 if (isset($search_arr['is_show'])) {
-        //                     $query = $query->Where('product_finishes.is_show', $search_arr['is_show']);
-        //                 }
-        //             });
-        // }
+        $search_plus = $input['search_plus'];
+        $main = $main->Where(function ($query) use ($search_plus) {
+                    if (isset($search_plus['name'])) {
+                        $query = $query->Where('goods.name', 'like', '%' . $search_plus['name'] . '%');
+                    }
+                    if (isset($search_plus['goods_category'])) {
+                        $query = $query->Where('goods.goods_category_id', $search_plus['goods_category']);
+                    }
+                    if (isset($search_plus['is_show'])) {
+                        $query = $query->Where('goods.is_show', $search_plus['is_show'] );
+                    }
+                });
 
         $main = $main->paginate(20);
 
@@ -120,7 +109,8 @@ class GoodsController extends Controller
 	            'price'=>$input['basic']['price'],
 	            'is_show'=>$input['basic']['is_show'],
 	            'sort'=>$input['basic']['sort'],
-	            'created_at'=>now(),
+                'remark'=>$input['basic']['remark'],
+	            'created_at'=>now()
             ]);
 
         	$last_id = DB::getPdo()->lastInsertId();
@@ -134,7 +124,7 @@ class GoodsController extends Controller
 				            'goods_combo_id'=>$val['combo_id'],
 				            'product_id'=>$val1['product_id'],
 				            'product_style_id'=>$val2['id'],
-				            'extra_price'=>$val2['extra_price'],
+				            'extra_price'=>$val2['extra_price'] ?? 0,
 				            'created_at'=>now(),
 			            ]);
 	            	}
@@ -151,6 +141,76 @@ class GoodsController extends Controller
         }
 
 	}
+
+    public function update(Request $request,$action_type)
+    {
+        $input = $request->all();
+
+
+        switch ($action_type) {
+            case 'id':
+                $validator = Validator::make($input, [
+                    'id' => 'required',
+                    'basic' => 'required',
+                    'goods' => 'required',
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json(['result' => 'validator_error','data' => $validator->errors()->all()],400);
+                }
+
+                try {
+                    DB::beginTransaction();
+
+                    Goods::
+                    where('id',$input['id'])
+                    ->where('store_id',Auth::user()->store_id)
+                    ->update([
+                        'store_id'=>Auth::user()->store_id,
+                        'goods_category_id'=>$input['basic']['goods_category_id'],
+                        'name'=>$input['basic']['name'],
+                        'price'=>$input['basic']['price'],
+                        'is_show'=>$input['basic']['is_show'],
+                        'sort'=>$input['basic']['sort'],
+                        'remark'=>$input['basic']['remark'],
+                        'updated_at'=>now()
+                    ]);
+
+                    GoodsProductStyleMap::where('goods_id',$input['id'])->where('store_id',Auth::user()->store_id)->delete();
+
+                    foreach ($input['goods'] as $key => $val) {
+                        foreach ($val['product_data'] as $key1 => $val1) {
+                            foreach ($val1['product_style'] as $key2 => $val2) {
+                                GoodsProductStyleMap::insert([
+                                    'store_id'=>Auth::user()->store_id,
+                                    'goods_id'=>$input['id'],
+                                    'goods_combo_id'=>$val['combo_id'],
+                                    'product_id'=>$val1['product_id'],
+                                    'product_style_id'=>$val2['id'],
+                                    'extra_price'=>$val2['extra_price'] ?? 0,
+                                    'created_at'=>now(),
+                                ]);
+                            }
+                        }
+                    }
+
+                    DB::commit();
+
+                    return response()->json(['result' => 'success'],200);
+
+                } catch (Exception $e) {
+                    DB::rollback();
+                    return response()->json(['result' => 'error','data' => $e->getMessage()],400);
+                }
+
+                break;
+            default:
+                return response()->json(['result' => 'error'],400);
+                break;
+        }
+
+    }
+
 
     public function get(Request $request,$action_type)
     {
@@ -229,6 +289,15 @@ class GoodsController extends Controller
 
                 break;
 
+            case 'all':
+
+                $main = Goods::where('store_id' , Auth::user()->store_id)->get();
+                
+                return response()->json(['result' => 'success','data' => $main],200);
+
+
+                break;
+
             default:
                 return response()->json(['result' => 'error' ],400);
                 break;
@@ -236,4 +305,34 @@ class GoodsController extends Controller
     }
 
 
+    public function delete(Request $request)
+    {
+        $input = $request->all();
+
+        $validator = Validator::make($input, [
+            'id' => 'required',
+        ],[
+            "id.required" => 'id_required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['result' => 'validator_error','data' => $validator->errors()->all()]);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            Goods::where('store_id' , Auth::user()->store_id)->where('id',$input['id'])->delete();
+            GoodsProductStyleMap::where('store_id' , Auth::user()->store_id)->where('goods_id',$input['id'])->delete();
+
+            DB::commit();
+
+            return response()->json(['result' => 'success']);
+
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json(['result' => 'error','data' => $e->getMessage()]);
+        }
+
+    }
 }
