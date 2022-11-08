@@ -236,6 +236,11 @@
     },
     activated(){
         var self = this;
+        if (self.$route.query.goods_id) {
+            self.searchPlus.goods = self.$route.query.goods_id;
+            self.searchPlusActive = true;
+        }
+
         self.getData();
     },
     created() {
@@ -250,6 +255,7 @@
             .catch(function(error) {
                 self.$router.push({ path: '/error-500' })
             });
+
     }
 }
 

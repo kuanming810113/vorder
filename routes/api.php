@@ -34,6 +34,38 @@ Route::group([
     Route::post('/login', [UserController::class, 'login']);
 });
 
+use App\Http\Controllers\AccountController;
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'account'
+], function () {
+    Route::post('/index', [AccountController::class, 'index']);
+    Route::post('/update/{action_type}', [AccountController::class, 'update']);
+    Route::post('/insert', [AccountController::class, 'insert']);
+    Route::post('/delete', [AccountController::class, 'delete']);
+});
+Route::group([
+    'prefix' => '/account'
+], function () {
+    Route::post('/get/{action_type}', [AccountController::class, 'get']);
+});
+
+use App\Http\Controllers\CompanyController;
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => '/company'
+], function () {
+    Route::post('/index', [CompanyController::class, 'index']);
+    Route::post('/update/{action_type}', [CompanyController::class, 'update']);
+    Route::post('/insert', [CompanyController::class, 'insert']);
+    Route::post('/delete', [CompanyController::class, 'delete']);
+});
+Route::group([
+    'prefix' => '/company'
+], function () {
+    Route::post('/get/{action_type}', [CompanyController::class, 'get']);
+});
+
 
 use App\Http\Controllers\ProductController;
 Route::group([

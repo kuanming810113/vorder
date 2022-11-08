@@ -21,7 +21,7 @@
                     <a href="javascript:void(0)" @click="getView(item.id)">{{item.name}}</a>
                 </template>
                 <template v-slot:item.product="{ item }">
-                    <a href="#">查看</a>
+                    <a href="javascript:void(0)" @click="productView(item.id)">查看</a>
                 </template>
                 <template v-slot:item.is_show="{ item }">
                     <v-chip small :color="getColor(item.is_show)" v-if="item.is_show == '1'">是</v-chip>
@@ -171,6 +171,11 @@
                 self.searchPlusActive = false;
             }
 
+        },
+        productView(id){
+            console.log(id)
+            var self = this;
+            self.$router.push({ name: 'product', query: { goods_id: id }  });
         },
         updateView(id) {
             var self = this;

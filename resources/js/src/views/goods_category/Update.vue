@@ -82,13 +82,13 @@ export default {
                 { title: '基本設定' },
             ],
             is_show_items: [
-                { text: '是', value: '1' },
-                { text: '否', value: '0' },
+                { text: '是', value: 1 },
+                { text: '否', value: 0 },
             ],
             goods_category: {
                 name: '',
                 sort: '1',
-                is_show: '',
+                is_show: null,
             },
         }
     },
@@ -101,7 +101,7 @@ export default {
                             id: self.$route.params.id,
                             name: self.goods_category.name,
                             sort: self.goods_category.sort,
-                            is_show: self.goods_category.is_show.value
+                            is_show: self.goods_category.is_show
                         })
                         .then(function(response) {
                             if (response.data.result == 'success') {
@@ -127,12 +127,6 @@ export default {
             .then(function(response) {
                 if (response.data.result == 'success') {
                     self.goods_category = response.data.data;
-
-                    if (self.goods_category.is_show == 1) {
-                        self.goods_category.is_show = { text: '是', value: '1' };
-                    } else {
-                        self.goods_category.is_show = { text: '否', value: '0' };
-                    }
                     self.overlay = false;
 
                 }

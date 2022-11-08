@@ -83,13 +83,13 @@ export default {
                 { title: '基本設定' },
             ],
             is_show_items:[
-                { text: '是', value: '1'},
-                { text: '否', value: '0'},
+                { text: '是', value: 1},
+                { text: '否', value: 0},
             ],
             goods_category: {
                 name: '',
                 sort: '1',
-                is_show: '1',
+                is_show: 1,
             },
         }
     },

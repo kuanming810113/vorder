@@ -1,5 +1,5 @@
 <template>
-    <v-list-group ref="refVListGroup" class="vertical-nav-menu-group text--primary">
+    <v-list-group ref="refVListGroup" class="vertical-nav-menu-group text--primary" :value="$attrs.active"> 
         <template #prependIcon>
             <v-icon :class="{ 'alternate-icon-small': !icon }">
                 {{ icon }}

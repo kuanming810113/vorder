@@ -36,6 +36,66 @@ const routes = [{
         component: () => import('@/views/order/Get.vue'),
     },
 
+    //本日訂單
+    {
+        path: '/order_timely',
+        name: 'order_timely',
+        component: () => import('@/views/order_timely/Index.vue'),
+    },
+    {
+        path: '/order_timely/get/:id',
+        name: 'order_timely-get',
+        component: () => import('@/views/order_timely/Get.vue'),
+    },
+
+
+
+    //帳戶設定
+    {
+        path: '/account',
+        name: 'account',
+        component: () => import('@/views/account/Index.vue'),
+    },
+    {
+        path: '/account/insert',
+        name: 'account-insert',
+        component: () => import('@/views/account/Insert.vue'),
+    },
+    {
+        path: '/account/update/:id',
+        name: 'account-update',
+        component: () => import('@/views/account/Update.vue'),
+    },
+    {
+        path: '/account/get/:id',
+        name: 'account-get',
+        component: () => import('@/views/account/Get.vue'),
+    },
+
+    //合作廠商
+    {
+        path: '/company',
+        name: 'company',
+        component: () => import('@/views/company/Index.vue'),
+    },
+    {
+        path: '/company/insert',
+        name: 'company-insert',
+        component: () => import('@/views/company/Insert.vue'),
+    },
+    {
+        path: '/company/update/:id',
+        name: 'company-update',
+        component: () => import('@/views/company/Update.vue'),
+    },
+    {
+        path: '/company/get/:id',
+        name: 'company-get',
+        component: () => import('@/views/company/Get.vue'),
+    },
+
+
+
     //商品設定
     {
         path: '/product',
@@ -60,6 +120,58 @@ const routes = [{
         name: 'product-get',
         component: () => import('@/views/product/Get.vue'),
     },
+
+    //倉儲管理
+    {
+        path: '/warehouse_management',
+        name: 'warehouse_management',
+        component: () => import('@/views/warehouse_management/Index.vue'),
+        meta: {
+            keepAlive: true,
+        },
+    },
+    {
+        path: '/warehouse_management/insert',
+        name: 'warehouse_management-insert',
+        component: () => import('@/views/warehouse_management/Insert.vue'),
+    },
+    {
+        path: '/warehouse_management/update/:id',
+        name: 'warehouse_management-update',
+        component: () => import('@/views/warehouse_management/Update.vue'),
+    },
+    {
+        path: '/warehouse_management/get/:id',
+        name: 'warehouse_management-get',
+        component: () => import('@/views/warehouse_management/Get.vue'),
+    },
+
+    //庫存變更紀錄
+    {
+        path: '/inventory_change_record',
+        name: 'inventory_change_record',
+        component: () => import('@/views/inventory_change_record/Index.vue'),
+        meta: {
+            keepAlive: true,
+        },
+    },
+    {
+        path: '/inventory_change_record/insert',
+        name: 'inventory_change_record-insert',
+        component: () => import('@/views/inventory_change_record/Insert.vue'),
+    },
+    {
+        path: '/inventory_change_record/update/:id',
+        name: 'inventory_change_record-update',
+        component: () => import('@/views/inventory_change_record/Update.vue'),
+    },
+    {
+        path: '/inventory_change_record/get/:id',
+        name: 'inventory_change_record-get',
+        component: () => import('@/views/inventory_change_record/Get.vue'),
+    },
+
+
 
     //發布類別
     {
