@@ -124,7 +124,7 @@ class AccountController extends Controller
 	            'name'=>$input['name'],
 	            'company_id'=>$input['company_id'],
 	            'price'=>$input['price'] ?? 0,
-	            'date'=>( isset($input['date'])) ? date('Ymd',strtotime($input['date'])) : null,
+	            'date'=>$input['date'],
 	            'remark'=>$input['remark'],
 	            'created_at'=>now(),
             ]);

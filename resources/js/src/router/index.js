@@ -123,27 +123,27 @@ const routes = [{
 
     //倉儲管理
     {
-        path: '/warehouse_management',
-        name: 'warehouse_management',
-        component: () => import('@/views/warehouse_management/Index.vue'),
+        path: '/warehouse_manage',
+        name: 'warehouse_manage',
+        component: () => import('@/views/warehouse_manage/Index.vue'),
         meta: {
             keepAlive: true,
         },
     },
     {
-        path: '/warehouse_management/insert',
-        name: 'warehouse_management-insert',
-        component: () => import('@/views/warehouse_management/Insert.vue'),
+        path: '/warehouse_manage/insert',
+        name: 'warehouse_manage-insert',
+        component: () => import('@/views/warehouse_manage/Insert.vue'),
     },
     {
-        path: '/warehouse_management/update/:id',
-        name: 'warehouse_management-update',
-        component: () => import('@/views/warehouse_management/Update.vue'),
+        path: '/warehouse_manage/update/:id',
+        name: 'warehouse_manage-update',
+        component: () => import('@/views/warehouse_manage/Update.vue'),
     },
     {
-        path: '/warehouse_management/get/:id',
-        name: 'warehouse_management-get',
-        component: () => import('@/views/warehouse_management/Get.vue'),
+        path: '/warehouse_manage/get/:id',
+        name: 'warehouse_manage-get',
+        component: () => import('@/views/warehouse_manage/Get.vue'),
     },
 
     //庫存變更紀錄

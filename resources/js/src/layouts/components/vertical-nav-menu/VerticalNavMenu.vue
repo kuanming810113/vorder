@@ -23,9 +23,9 @@
                 <nav-menu-link title="帳務紀錄" :to="{ name: 'account' }"></nav-menu-link>
                 <nav-menu-link title="合作廠商" :to="{ name: 'company' }"></nav-menu-link>
             </nav-menu-group>
-            <nav-menu-group title="庫存管理" :icon="icons.mdiViewListOutline" :active="(this.$route.name == 'product' || this.$route.name == 'warehouse_management'|| this.$route.name == 'inventory_change_record') ? 1 : 0">
+            <nav-menu-group title="庫存管理" :icon="icons.mdiViewListOutline" :active="(this.$route.name == 'product' || this.$route.name == 'warehouse_manage'|| this.$route.name == 'inventory_change_record') ? 1 : 0">
                 <nav-menu-link title="商品設定" :to="{ name: 'product' }"></nav-menu-link>
-                <nav-menu-link title="倉儲管理" :to="{ name: 'warehouse_management' }"></nav-menu-link>
+                <nav-menu-link title="倉儲管理" :to="{ name: 'warehouse_manage' }"></nav-menu-link>
                 <nav-menu-link title="庫存更動紀錄" :to="{ name: 'inventory_change_record' }"></nav-menu-link>
             </nav-menu-group>
             <nav-menu-group title="上架設定" :icon="icons.mdiViewListOutline" :active="(this.$route.name == 'goods_category' || this.$route.name == 'goods_combo'|| this.$route.name == 'goods') ? 1 : 0">

@@ -69,7 +69,8 @@
                                             <div class="text-h5">
                                                 <v-icon>
                                                     {{ icons.mdiDragHorizontal }}
-                                                </v-icon> {{item.combo_name}}
+                                                </v-icon> 
+                                                <b>{{item.combo_name}}</b>
                                             </div>
                                         </v-expansion-panel-header>
                                         <v-expansion-panel-content>
@@ -89,7 +90,7 @@
                                                                 <v-icon>
                                                                     {{ icons.mdiDragHorizontalVariant }}
                                                                 </v-icon>
-                                                                {{item1.product_name}}
+                                                                <b>{{item1.product_name}}</b>
                                                             </div>
                                                         </v-expansion-panel-header>
                                                         <v-expansion-panel-content>
@@ -122,7 +123,7 @@
                                             <v-expansion-panels :readonly="true">
                                                 <v-expansion-panel class="mt-5">
                                                     <v-expansion-panel-header disable-icon-rotate @click="showProductDialog(key)" color="#F1E1FF">
-                                                        <div>新增商品</div>
+                                                        <div><b>新增商品</b></div>
                                                         <template v-slot:actions>
                                                             <v-icon color="info">
                                                                 {{ icons.mdiPlusCircle }}
@@ -138,7 +139,7 @@
                             <v-expansion-panels :readonly="true">
                                 <v-expansion-panel class="mt-5">
                                     <v-expansion-panel-header disable-icon-rotate @click="comboDialog = true">
-                                        新增組合
+                                        <b>新增組合</b>
                                         <template v-slot:actions>
                                             <v-icon color="info">
                                                 {{ icons.mdiPlusCircle }}
@@ -465,6 +466,15 @@ export default {
             var self = this;
 
             self.$refs.product_observer.validate().then(success => {
+                var product_data = self.goods[self.addProductKey].product_data;
+                for(var key in product_data){
+                    if (product_data[key].product_id == self.product_id) {
+                        self.snackbar = true;
+                        self.snackbar_text = '此組合已有此商品 !';
+                        return false;
+                    }
+                }
+
                 if (success) {
                     axios.post('/api/product_style/get/product_id', {
                             product_id: self.product_id
@@ -554,7 +564,6 @@ export default {
             .then(function(response) {
                 if (response.data.result == 'success') {
                     var data = response.data.data;
-                                        console.log(data.goods)
                     self.goods = data.goods;
                     self.basic = data.basic;
                     self.overlay = false;

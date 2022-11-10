@@ -84,6 +84,23 @@ Route::group([
 });
 
 
+use App\Http\Controllers\WarehouseManageController;
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => '/warehouse_manage'
+], function () {
+    Route::post('/index', [WarehouseManageController::class, 'index']);
+    Route::post('/update/{action_type}', [WarehouseManageController::class, 'update']);
+    Route::post('/insert', [WarehouseManageController::class, 'insert']);
+    Route::post('/delete', [WarehouseManageController::class, 'delete']);
+});
+Route::group([
+    'prefix' => '/warehouse_manage'
+], function () {
+    Route::post('/get/{action_type}', [WarehouseManageController::class, 'get']);
+});
+
+
 use App\Http\Controllers\ProductStyleController;
 Route::group([
     'middleware' => 'auth:sanctum',

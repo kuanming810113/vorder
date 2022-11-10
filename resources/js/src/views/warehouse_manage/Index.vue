@@ -9,7 +9,7 @@
         </v-card>
         <v-card>
             <v-card-title>
-                <v-btn class="primary mr-2" to="product/insert">新增</v-btn>
+                <v-btn class="primary mr-2" to="warehouse_manage/insert">新增</v-btn>
                 <v-badge :value="searchPlusActive" :content="'!'" color="error" overlap>
                     <v-btn class="primary mr-2" @click="seachDialog=true">進階搜尋</v-btn>
                 </v-badge>
@@ -17,19 +17,16 @@
                 <v-text-field v-model="search" append-icon="mdi-magnify" label="搜尋" single-line hide-details @keyup='getData()'></v-text-field>
             </v-card-title>
             <v-data-table :headers="headers" :items="list" hide-default-footer :page.sync="page" :items-per-page="perPage" :options.sync="options" :loading="loading" class="elevation-1" mobile-breakpoint="0">
-                <template v-slot:item.product_style="{ item }">
-                    <span v-for="(item, index) in item.product_style">
-                        <v-badge class="mr-7 mb-1" :color="getColor(item.amount)" :content="(item.amount == -99) ? '無限' : String(item.amount)" overlap>
-                            <v-chip label>{{ item.name }}</v-chip>
-                        </v-badge>
-                    </span>
-                </template>
                 <template v-slot:item.name="{ item }">
                     <a href="javascript:void(0)" @click="getView(item.id)">{{item.name}}</a>
                 </template>
+                <template v-slot:item.price="{ item }">
+                    <div :class="getColor(item.price)">{{item.price}}</div>
+                </template>
                 <template v-slot:item.tool="{ item }">
-                    <v-btn small rounded @click="updateView(item.id)">編輯</v-btn>
-                    <v-btn small rounded @click="deleteData(item.id)">刪除</v-btn>
+                    <v-btn small rounded @click="updateView(item.id)" v-if="item.id">編輯</v-btn>
+                    <v-btn small rounded @click="recoverAmount(item.id)" v-if="item.id">恢復數量</v-btn>
+                    <v-btn small rounded @click="deleteData(item.id)" v-if="item.id">刪除</v-btn>
                 </template>
             </v-data-table>
             <div class="text-center pa-3">
@@ -47,16 +44,37 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12">
-                                        <v-text-field label="商品名稱" v-model="searchPlus.name"></v-text-field>
+                                        <v-text-field label="成本名稱" v-model="searchPlus.name"></v-text-field>
                                     </v-col>
                                     <v-col cols="12">
-                                        <v-text-field type="number" label="各樣式的數量小於" v-model="searchPlus.amount"></v-text-field>
+                                    <v-select v-model="searchPlus.company_id" label="合作廠商" :items="company_all" item-text="name" item-value="id" :clearable='true'>
+                                    </v-select>
+                                    </v-col>
+                                    <v-col cols="6">
+                                        <v-menu ref="start_menu" v-model="start_menu" :close-on-content-click="false" transition="scale-transition" offset-y min-width="auto">
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-text-field v-model="searchPlus.start_date" label="開始日期" readonly v-bind="attrs" v-on="on" :clearable='true'></v-text-field>
+                                            </template>
+                                            <v-date-picker v-model="searchPlus.start_date" :active-picker.sync="start_activePicker" :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)" min="1950-01-01" @change="start_save"></v-date-picker>
+                                        </v-menu>
+                                    </v-col>
+                                    <v-col cols="6">
+                                        <v-menu ref="end_menu" v-model="end_menu" :close-on-content-click="false" transition="scale-transition" offset-y min-width="auto">
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-text-field v-model="searchPlus.end_date" label="結束日期" readonly v-bind="attrs" v-on="on" :clearable='true'></v-text-field>
+                                            </template>
+                                            <v-date-picker v-model="searchPlus.end_date" :active-picker.sync="end_activePicker" :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)" min="1950-01-01" @change="end_save"></v-date-picker>
+                                        </v-menu>
+                                    </v-col>
+                                    <v-col cols="6">
+                                        <v-text-field type="number" label="金額大於" v-model="searchPlus.bigger_price"></v-text-field>
+                                    </v-col>
+                                    <v-col cols="6">
+                                        <v-text-field type="number" label="金額小於" v-model="searchPlus.smaller_price"></v-text-field>
                                     </v-col>
                                     <v-col cols="12">
-                                        <v-autocomplete v-model="searchPlus.goods" item-text="name" item-value="id" :items="goods_all" label="上架名稱">
-                                        </v-autocomplete>
+                                         <v-select v-model="searchPlus.is_count" label="計算金額" :items="is_count_items" item-text="text" item-value="value"></v-select>
                                     </v-col>
-
                                 </v-row>
                             </v-container>
                         </v-form>
@@ -89,7 +107,6 @@
                 </v-btn>
             </template>
         </v-snackbar>
-
     </div>
 </template>
 <script>
@@ -112,15 +129,17 @@
                     href: '',
                 },
                 {
-                    text: '商品設定',
+                    text: '倉儲管理',
                     href: window.location.pathname + window.location.search,
                 },
             ],
             headers: [
                 { text: '流水號', value: 'sno', sortable: false },
-                { text: '商品名稱', value: 'name', sortable: true },
-                { text: '樣式', value: 'product_style', sortable: false },
-                { text: '創建日期', value: 'created_at', sortable: true },
+                { text: '管理名稱', value: 'name', sortable: true },
+                { text: '廠商名稱', value: 'company_name', sortable: true },
+                { text: '金額', value: 'price', sortable: true },
+                { text: '日期', value: 'date', sortable: true },
+                { text: '備註', value: 'remark', sortable: true },
                 { text: '功能', value: 'tool', sortable: false },
             ],
             page: 1 ,
@@ -133,14 +152,27 @@
             search: null,
             searchPlus:{
                 name: null,
-                amount: null,
-                goods:null
+                start_date: null,
+                end_date: null,
+                is_count:0,
+                company_id:null,
+                bigger_price:null,
+                smaller_price:null,
             },
             searchPlusActive:false,
             seachDialog: false,
 
-            goods_all:[],
+            start_menu: false,
+            start_activePicker: null,
+            end_menu: false,
+            end_activePicker: null,
+
             list: [],
+            is_count_items:[
+                { text: '是', value: 1},
+                { text: '否', value: 0},
+            ],
+            company_all: [],
         }
     },
     watch: {
@@ -155,11 +187,24 @@
             deep: true,
 
         },
+        start_menu(val) {
+            val && setTimeout(() => (this.start_activePicker = 'YEAR'))
+        },
+        end_menu(val) {
+            val && setTimeout(() => (this.end_activePicker = 'YEAR'))
+        },
+
     },
     computed: {
 
     },
     methods: {
+        start_save(date) {
+            this.$refs.start_menu.save(date)
+        },
+        end_save(date) {
+            this.$refs.end_menu.save(date)
+        },
         searchPlusReset(){
             this.$refs.seachForm.reset()
         },
@@ -167,7 +212,8 @@
             var self = this;
             self.seachDialog = false
             self.getData()
-            if (self.searchPlus.name || self.searchPlus.amount || self.searchPlus.goods) {
+
+            if (self.searchPlus.name || self.searchPlus.start_date|| self.searchPlus.end_date|| self.searchPlus.is_count == 1|| self.searchPlus.bigger_price|| self.searchPlus.smaller_price|| self.searchPlus.company_id) {
                 self.searchPlusActive = true;
             }else{
                 self.searchPlusActive = false;
@@ -176,16 +222,16 @@
         },
         updateView(id) {
             var self = this;
-            self.$router.push({ name: 'product-update', params: { id: id }  });
+            self.$router.push({ name: 'warehouse_manage-update', params: { id: id }  });
         },
         getView(id) {
             var self = this;
-            self.$router.push({ name: 'product-get', params: { id: id } });
+            self.$router.push({ name: 'warehouse_manage-get', params: { id: id } });
         },
         deleteData(id){
             var self = this;
             if (confirm("確定要永久刪除嗎 ?")==true){    
-                axios.post('/api/product/delete', {
+                axios.post('/api/warehouse_manage/delete', {
                     id:id
                 })
                 .then(function (response) {
@@ -194,12 +240,22 @@
                     }
                 })
                 .catch(function (error) {
-                    if (error.response.data.result == 'goods_exist') {
-                        self.snackbar = true;
-                        self.snackbar_text = '此商品已上架,請先到上架頁面做刪除 ! ';
-                        return false;
+                    self.$router.push({ path: '/error-500' })
+                });
+            }  
+        },
+        recoverAmount(id){
+            var self = this;
+            if (confirm("確定要恢復更改數量嗎 ?")==true){    
+                axios.post('/api/warehouse_manage/update/recover', {
+                    id:id
+                })
+                .then(function (response) {
+                    if (response.data.result == 'success') {
+                        self.getData()
                     }
-
+                })
+                .catch(function (error) {
                     self.$router.push({ path: '/error-500' })
                 });
             }  
@@ -208,7 +264,7 @@
             var self = this;
             self.loading = true;
             const { sortBy, sortDesc } = self.options
-            axios.post('/api/product/index', {
+            axios.post('/api/warehouse_manage/index', {
                     page: self.page,
                     sort_by: sortBy[0],
                     sort_desc: sortDesc[0],
@@ -218,8 +274,26 @@
                 })
                 .then(function(response) {
                     if (response.data.result == 'success') {
-                        self.list = response.data.data.data.map((d, index) => ({ ...d, sno: (self.page-1)*parseInt(self.perPage) + index + 1 }))
+                        var data = response.data.data.data;
+                        self.list = data.map((d, index) => ({ ...d, sno: (self.page-1)*parseInt(self.perPage) + index + 1 }))
                         self.pageCount = response.data.data.last_page;
+
+                        //計算總金額
+                        if (self.searchPlus.is_count == 1) {
+                            var count = 0;
+                            for(var k in data){
+                                count += data[k].price
+                            }
+                            self.list.push({
+                                sno:'',
+                                name:'',
+                                company_name:'總金額 => ',
+                                price:count,
+                                date:'',
+                                remark:'',
+                                tool:'',
+                            });
+                        }
 
                         self.loading = false;
                     }
@@ -228,37 +302,28 @@
                     self.$router.push({ path: '/error-500' })
                 });
         },
-        getColor(amount) {
-            if (amount > 0) return 'success'
-            else if (amount == -99) return 'warning'
-            else return 'error'
+        getColor(price) {
+            if (price > 0) return 'success--text'
+            else if (price == 0) return 'secondary--text'
+            else return 'error--text'
         },
     },
     activated(){
         var self = this;
-        if (self.$route.query.goods_id) {
-            self.searchPlus.goods = self.$route.query.goods_id;
-            self.searchPlusActive = true;
-        }else{
-            self.searchPlus.goods = null;
-            self.searchPlusActive = false;
-        }
-
         self.getData();
     },
     created() {
         var self = this;
-        axios.post('/api/goods/get/all')
+        axios.post('/api/company/get/all')
             .then(function(response) {
                 if (response.data.result == 'success') {
                     var data = response.data.data;
-                    self.goods_all = data;
+                    self.company_all = data;
                 }
             })
             .catch(function(error) {
                 self.$router.push({ path: '/error-500' })
             });
-
     }
 }
 

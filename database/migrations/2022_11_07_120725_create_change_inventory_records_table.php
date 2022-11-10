@@ -17,11 +17,11 @@ return new class extends Migration
             $table->id();
             $table->integer('store_id')->comment('店家id');
             $table->integer('order_id')->nullable()->comment('訂單id');
-            $table->integer('warehouse_management_id')->nullable()->comment('倉儲管理id');
+            $table->integer('warehouse_manage_id')->nullable()->comment('倉儲管理id');
             $table->integer('product_id')->comment('商品id');
             $table->integer('product_style_id')->comment('商品樣式id');
             $table->integer('change_amount')->comment('變動數量');
-            $table->tinyinteger('type')->comment('0:一般、1:進貨、2:退貨、3:消貨、4:訂單');
+            $table->tinyinteger('type')->comment('1:一般、2:進貨、3:退貨、4:退料、5:報廢、6:訂單 ');
             $table->timestamps();
         });
     }

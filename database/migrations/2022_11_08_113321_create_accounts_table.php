@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->integer('store_id')->comment('店家id');
+            $table->integer('warehouse_manage_id')->nullable()->comment('倉庫管理ID');
             $table->integer('company_id')->nullable()->comment('供應商ID');
             $table->string('name')->comment('成本名稱');
             $table->integer('price')->nullable()->comment('成本金額');

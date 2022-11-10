@@ -44,8 +44,7 @@
                                     <v-select dense outlined v-model="basic.is_show" label="是否上架" :items="is_show_items" item-text="text" item-value="value"></v-select>
                                 </v-col>
                                 <v-col md="6" cols="12">
-                                    <v-text-field type="number" dense outlined v-model="basic.sort" label="排序" hint="數字越大排越前面
-                                    "></v-text-field>
+                                    <v-text-field type="number" dense outlined v-model="basic.sort" label="排序" hint="數字越大排越前面"></v-text-field>
                                 </v-col>
                                 <v-col cols="12">
                                     <v-textarea dense outlined v-model="basic.remark" label="備註"></v-textarea>
@@ -69,7 +68,8 @@
                                             <div class="text-h5">
                                                 <v-icon>
                                                     {{ icons.mdiDragHorizontal }}
-                                                </v-icon> {{item.combo_name}}
+                                                </v-icon> 
+                                                <b>{{item.combo_name}}</b>
                                             </div>
                                         </v-expansion-panel-header>
                                         <v-expansion-panel-content>
@@ -89,7 +89,7 @@
                                                                 <v-icon>
                                                                     {{ icons.mdiDragHorizontalVariant }}
                                                                 </v-icon>
-                                                                {{item1.product_name}}
+                                                                <b>{{item1.product_name}}</b>
                                                             </div>
                                                         </v-expansion-panel-header>
                                                         <v-expansion-panel-content>
@@ -138,7 +138,7 @@
                             <v-expansion-panels :readonly="true">
                                 <v-expansion-panel class="mt-5">
                                     <v-expansion-panel-header disable-icon-rotate @click="comboDialog = true">
-                                        新增組合
+                                        <b>新增組合</b>
                                         <template v-slot:actions>
                                             <v-icon color="info">
                                                 {{ icons.mdiPlusCircle }}
@@ -163,7 +163,7 @@
             <v-dialog v-model="comboDialog" persistent max-width="600px">
                 <v-card>
                     <v-card-title>
-                        <span class="text-h5">新增組合</span>
+                        <span class="text-h5"><b>新增組合</b></span>
                     </v-card-title>
                     <v-card-text>
                         <validation-observer ref="combo_observer">
@@ -461,6 +461,15 @@ export default {
             var self = this;
 
             self.$refs.product_observer.validate().then(success => {
+                var product_data = self.goods[self.addProductKey].product_data;
+                for(var key in product_data){
+                    if (product_data[key].product_id == self.product_id) {
+                        self.snackbar = true;
+                        self.snackbar_text = '此組合已有此商品 !';
+                        return false;
+                    }
+                }
+
                 if (success) {
                     axios.post('/api/product_style/get/product_id', {
                             product_id: self.product_id
@@ -480,7 +489,6 @@ export default {
                                 }
 
                                 self.goods[self.addProductKey].product_data.push(result);
-
 
                             }
                         })
