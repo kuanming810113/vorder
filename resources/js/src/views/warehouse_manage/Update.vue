@@ -72,7 +72,7 @@
                 <v-tab-item class="pa-6 mt-6">
                     <validation-observer ref="style_observer">
                         <v-form @submit.prevent="submit">
-                            <v-expansion-panels focusable multiple>
+                            <v-expansion-panels focusable multiple  v-model="product_panel">
                                     <v-expansion-panel v-for="(item1,key1,index1) in product" :key="key1">
                                         <v-expansion-panel-header color="#F1E1FF">
                                             <div class="text-h6">
@@ -259,6 +259,8 @@ export default {
             activePicker: null,
             menu: false,
 
+            product_panel:[],
+
             product_id: '',
             product: [],
 
@@ -379,6 +381,8 @@ export default {
                     }
                     self.product = JSON.parse(data.change_info)
 
+                    self.product_panel = [...Array(self.product.length).keys()].map((k, i) => i)
+                    
                     self.overlay = false;
                 }
             })
