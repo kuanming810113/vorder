@@ -60,13 +60,13 @@
                             <v-expansion-panels focusable multiple>
                                 <v-expansion-panel v-for="(item,key,index) in goods" :key="key">
                                     <v-expansion-panel-header>
-                                        <div class="text-h5">{{item.combo_name}}</div>
+                                        <div class="text-h5"><b>{{item.combo_name}}</b></div>
                                     </v-expansion-panel-header>
                                     <v-expansion-panel-content>
                                         <v-expansion-panels focusable>
                                             <v-expansion-panel v-for="(item1,key1,index1) in item.product_data" :key="key1">
                                                 <v-expansion-panel-header color="#F1E1FF">
-                                                    <div class="text-h6">{{item1.product_name}}</div>
+                                                    <div class="text-h6"><b>{{item1.product_name}}</b></div>
                                                 </v-expansion-panel-header>
                                                 <v-expansion-panel-content>
                                                     <v-container>
