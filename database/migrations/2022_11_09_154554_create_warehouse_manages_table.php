@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('warehouse_manages', function (Blueprint $table) {
             $table->id();
-            $table->string('no')->nullable()->comment('編號');
             $table->integer('store_id')->comment('店家id');
             $table->integer('company_id')->nullable()->comment('廠商ID');
             $table->string('name')->comment('變更名稱');

@@ -17,6 +17,9 @@
                 <v-text-field v-model="search" append-icon="mdi-magnify" label="搜尋" single-line hide-details @keyup='getData()'></v-text-field>
             </v-card-title>
             <v-data-table :headers="headers" :items="list" hide-default-footer :page.sync="page" :items-per-page="perPage" :options.sync="options" :loading="loading" class="elevation-1" mobile-breakpoint="0">
+                <template v-slot:item.warehouse_manage_id="{ item }">
+                    <a href="javascript:void(0)" @click="getWarehouseManageView(item.warehouse_manage_id)" v-if="item.warehouse_manage_id">倉儲管理</a>
+                </template>
                 <template v-slot:item.name="{ item }">
                     <a href="javascript:void(0)" @click="getView(item.id)">{{item.name}}</a>
                 </template>
@@ -43,7 +46,7 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12">
-                                        <v-text-field label="成本名稱" v-model="searchPlus.name"></v-text-field>
+                                        <v-text-field label="帳務名稱" v-model="searchPlus.name"></v-text-field>
                                     </v-col>
                                     <v-col cols="12">
                                     <v-select v-model="searchPlus.company_id" label="合作廠商" :items="company_all" item-text="name" item-value="id" :clearable='true'>
@@ -134,7 +137,8 @@
             ],
             headers: [
                 { text: '流水號', value: 'sno', sortable: false },
-                { text: '成本名稱', value: 'name', sortable: true },
+                { text: '來至', value: 'warehouse_manage_id', sortable: true },
+                { text: '帳務名稱', value: 'name', sortable: true },
                 { text: '廠商名稱', value: 'company_name', sortable: true },
                 { text: '金額', value: 'price', sortable: true },
                 { text: '日期', value: 'date', sortable: true },
@@ -224,6 +228,10 @@
         updateView(id) {
             var self = this;
             self.$router.push({ name: 'account-update', params: { id: id }  });
+        },
+        getWarehouseManageView(id){
+            var self = this;
+            self.$router.push({ name: 'warehouse_manage-get', params: { id: id } });
         },
         getView(id) {
             var self = this;

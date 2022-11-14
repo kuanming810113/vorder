@@ -55,7 +55,7 @@
                                         </v-select>
                                     </v-col>
                                     <v-col cols="12">
-                                        <v-select v-model="searchPlus.is_show" label="是否上架" :items="is_show_items"></v-select>
+                                        <v-select v-model="searchPlus.is_show" label="是否上架" :items="is_show_items" item-text="text" item-value="value"></v-select>
                                     </v-col>
 
                                 </v-row>

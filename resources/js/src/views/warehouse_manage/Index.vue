@@ -44,7 +44,7 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12">
-                                        <v-text-field label="成本名稱" v-model="searchPlus.name"></v-text-field>
+                                        <v-text-field label="倉管名稱" v-model="searchPlus.name"></v-text-field>
                                     </v-col>
                                     <v-col cols="12">
                                     <v-select v-model="searchPlus.company_id" label="合作廠商" :items="company_all" item-text="name" item-value="id" :clearable='true'>
@@ -135,7 +135,7 @@
             ],
             headers: [
                 { text: '流水號', value: 'sno', sortable: false },
-                { text: '管理名稱', value: 'name', sortable: true },
+                { text: '倉管名稱', value: 'name', sortable: true },
                 { text: '廠商名稱', value: 'company_name', sortable: true },
                 { text: '金額', value: 'price', sortable: true },
                 { text: '日期', value: 'date', sortable: true },

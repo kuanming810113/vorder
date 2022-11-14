@@ -34,38 +34,38 @@ class WarehouseManageController extends Controller
         	}
         }
 
-        // if (isset($input['search'])) {
-        //     $search = $input['search'];
-        //     $main = $main->Where(function ($query) use ($search) {
-        //                 $query->orWhere('accounts.name', 'like', '%' . $search . '%');
-        //                 $query->orWhere('companies.name', 'like', '%' . $search . '%');
-        //                 $query->orWhere('accounts.price', 'like', '%' . $search . '%');
-        //                 $query->orWhere('accounts.date', 'like', '%' . $search . '%');
-        //                 $query->orWhere('accounts.remark', 'like', '%' . $search . '%');
-        //             });
-        // }
-        // //進階搜尋
-        // $search_plus = $input['search_plus'];
-        // $main = $main->Where(function ($query) use ($search_plus) {
-        //             if (isset($search_plus['name'])) {
-        //                 $query = $query->Where('accounts.name', 'like', '%' . $search_plus['name'] . '%');
-        //             }
-        //             if (isset($search_plus['company_id'])) {
-        //                 $query = $query->Where('accounts.company_id', $search_plus['company_id']);
-        //             }
-        //             if (isset($search_plus['start_date'])) {
-        //                 $query = $query->Where('accounts.date', '>=', $search_plus['start_date']);
-        //             }
-        //             if (isset($search_plus['end_date'])) {
-        //                 $query = $query->Where('accounts.date', '<=', $search_plus['end_date']);
-        //             }
-        //             if (isset($search_plus['bigger_price'])) {
-        //                 $query = $query->Where('accounts.price', '>=', $search_plus['bigger_price']);
-        //             }
-        //             if (isset($search_plus['smaller_price'])) {
-        //                 $query = $query->Where('accounts.price', '<=', $search_plus['smaller_price']);
-        //             }
-        //         });
+        if (isset($input['search'])) {
+            $search = $input['search'];
+            $main = $main->Where(function ($query) use ($search) {
+                        $query->orWhere('warehouse_manages.name', 'like', '%' . $search . '%');
+                        $query->orWhere('companies.name', 'like', '%' . $search . '%');
+                        $query->orWhere('warehouse_manages.price', 'like', '%' . $search . '%');
+                        $query->orWhere('warehouse_manages.date', 'like', '%' . $search . '%');
+                        $query->orWhere('warehouse_manages.remark', 'like', '%' . $search . '%');
+                    });
+        }
+        //進階搜尋
+        $search_plus = $input['search_plus'];
+        $main = $main->Where(function ($query) use ($search_plus) {
+                    if (isset($search_plus['name'])) {
+                        $query = $query->Where('warehouse_manages.name', 'like', '%' . $search_plus['name'] . '%');
+                    }
+                    if (isset($search_plus['company_id'])) {
+                        $query = $query->Where('accounts.company_id', $search_plus['company_id']);
+                    }
+                    if (isset($search_plus['start_date'])) {
+                        $query = $query->Where('warehouse_manages.date', '>=', $search_plus['start_date']);
+                    }
+                    if (isset($search_plus['end_date'])) {
+                        $query = $query->Where('warehouse_manages.date', '<=', $search_plus['end_date']);
+                    }
+                    if (isset($search_plus['bigger_price'])) {
+                        $query = $query->Where('warehouse_manages.price', '>=', $search_plus['bigger_price']);
+                    }
+                    if (isset($search_plus['smaller_price'])) {
+                        $query = $query->Where('warehouse_manages.price', '<=', $search_plus['smaller_price']);
+                    }
+                });
 
 
 
@@ -160,7 +160,7 @@ class WarehouseManageController extends Controller
                 Account::insert([
                     'store_id'=>Auth::user()->store_id,
                     'warehouse_manage_id'=>$WarehouseManage_last_id,
-                    'name'=>'倉儲管理 / '.$type.' / '.$input['name'],
+                    'name'=>$input['name'],
                     'price'=>$input['price'] ?? 0,
                     'date'=>$input['date'],
                     'company_id'=>$input['company_id'],
@@ -172,19 +172,21 @@ class WarehouseManageController extends Controller
 
 	        foreach ($input['product'] as $key => $val) {
 	        	foreach ($val['product_style'] as $key1 => $val1) {
-			        ProductStyle::where('id' , $val1['id'])
-			        ->where('store_id',Auth::user()->store_id)
-			        ->increment('amount',$val1['change_amount']);
+                    if ($val1['change_amount'] > 0) {
+                        ProductStyle::where('id' , $val1['id'])
+                        ->where('store_id',Auth::user()->store_id)
+                        ->increment('amount',$val1['change_amount']);
 
-			        ChangeInventoryRecord::insert([
-	                    'store_id'=>Auth::user()->store_id,
-	                    'warehouse_manage_id'=>$WarehouseManage_last_id,
-	                    'product_id'=>$val['product_id'],
-	                    'product_style_id'=>$val1['id'],
-	                    'change_amount'=> $val1['change_amount'],
-	                    'type'=>$input['type'],
-	                    'created_at'=>now(),
-			        ]);
+                        ChangeInventoryRecord::insert([
+                            'store_id'=>Auth::user()->store_id,
+                            'warehouse_manage_id'=>$WarehouseManage_last_id,
+                            'product_id'=>$val['product_id'],
+                            'product_style_id'=>$val1['id'],
+                            'change_amount'=> $val1['change_amount'],
+                            'type'=>$input['type'],
+                            'created_at'=>now(),
+                        ]);
+                    }
 	        	}
 	        }
 
@@ -192,7 +194,6 @@ class WarehouseManageController extends Controller
             where('id',$WarehouseManage_last_id)
             ->where('store_id',Auth::user()->store_id)
             ->update([
-                'no'=>'W'.str_pad($WarehouseManage_last_id,5,"0",STR_PAD_LEFT),
                 'change_info'=> json_encode($input['product'],JSON_UNESCAPED_UNICODE),
             ]);
 
@@ -263,7 +264,7 @@ class WarehouseManageController extends Controller
                     	->where('store_id',Auth::user()->store_id)
 		                ->update([
 		                    'warehouse_manage_id'=>$input['id'],
-		                    'name'=>'倉儲管理 / '.$type.' / '.$input['name'],
+		                    'name'=>$input['name'],
 		                    'price'=>$input['price'] ?? 0,
 		                    'date'=>$input['date'],
 		                    'company_id'=>$input['company_id'],

@@ -20,7 +20,7 @@
                         <form @submit.prevent="submit">
                             <v-row>
                                 <v-col md="6" cols="12">
-                                    <v-text-field dense outlined v-model="basic.name" label="成本名稱*" filled readonly></v-text-field>
+                                    <v-text-field dense outlined v-model="basic.name" label="帳務名稱*" filled readonly></v-text-field>
                                 </v-col>
                                 <v-col md="6" cols="12">
                                     <v-select v-model="basic.company_id" dense outlined label="合作廠商" :items="company_all" item-text="name" item-value="id" filled readonly>

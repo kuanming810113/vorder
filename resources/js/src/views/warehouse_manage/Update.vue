@@ -20,8 +20,8 @@
                         <v-form @submit.prevent="submit">
                             <v-row>
                                 <v-col md="6" cols="12">
-                                    <validation-provider v-slot="{ errors }" name="管理名稱*" rules="required">
-                                        <v-text-field v-model="basic.name" dense outlined :error-messages="errors" label="管理名稱*"></v-text-field>
+                                    <validation-provider v-slot="{ errors }" name="倉管名稱*" rules="required">
+                                        <v-text-field v-model="basic.name" dense outlined :error-messages="errors" label="倉管名稱*"></v-text-field>
                                     </validation-provider>
                                 </v-col>
                                 <v-col md="6" cols="12">

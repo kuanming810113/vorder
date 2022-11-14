@@ -101,6 +101,23 @@ Route::group([
 });
 
 
+use App\Http\Controllers\ChangeInventoryRecordController;
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => '/change_inventory_record'
+], function () {
+    Route::post('/index', [ChangeInventoryRecordController::class, 'index']);
+    Route::post('/update/{action_type}', [ChangeInventoryRecordController::class, 'update']);
+    Route::post('/insert', [WarehouseManageCoChangeInventoryRecordControllerntroller::class, 'insert']);
+    Route::post('/delete', [ChangeInventoryRecordController::class, 'delete']);
+});
+Route::group([
+    'prefix' => '/change_inventory_record'
+], function () {
+    Route::post('/get/{action_type}', [WarehouseManageController::class, 'get']);
+});
+
+
 use App\Http\Controllers\ProductStyleController;
 Route::group([
     'middleware' => 'auth:sanctum',
