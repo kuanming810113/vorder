@@ -50,6 +50,9 @@ class WarehouseManageController extends Controller
                     if (isset($search_plus['name'])) {
                         $query = $query->Where('warehouse_manages.name', 'like', '%' . $search_plus['name'] . '%');
                     }
+                    if (isset($search_plus['type'])) {
+                        $query = $query->Where('warehouse_manages.type', $search_plus['type']);
+                    }
                     if (isset($search_plus['company_id'])) {
                         $query = $query->Where('accounts.company_id', $search_plus['company_id']);
                     }

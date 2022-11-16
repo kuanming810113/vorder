@@ -9,14 +9,14 @@
         </v-card>
         <v-card>
             <v-card-title>
-                <v-btn class="primary mr-2" to="change_inventory_record/insert">新增</v-btn>
+                <v-btn class="primary mr-2" @click="selectDelete()">勾選刪除</v-btn>
                 <v-badge :value="searchPlusActive" :content="'!'" color="error" overlap>
                     <v-btn class="primary mr-2" @click="seachDialog=true">進階搜尋</v-btn>
                 </v-badge>
                 <v-spacer></v-spacer>
                 <v-text-field v-model="search" append-icon="mdi-magnify" label="搜尋" single-line hide-details @keyup='getData()'></v-text-field>
             </v-card-title>
-            <v-data-table :headers="headers" :items="list" hide-default-footer :page.sync="page" :items-per-page="perPage" :options.sync="options" :loading="loading" class="elevation-1" mobile-breakpoint="0">
+            <v-data-table v-model="select" show-select :headers="headers" :items="list" hide-default-footer :page.sync="page" :items-per-page="perPage" :options.sync="options" :loading="loading" class="elevation-1" mobile-breakpoint="0">
                 <template v-slot:item.name="{ item }">
                     <a href="javascript:void(0)" @click="getView(item.id)">{{item.name}}</a>
                 </template>
@@ -184,6 +184,7 @@
             end_menu: false,
             end_activePicker: null,
 
+            select:[],
             list: [],
 
             is_count_items:[
@@ -255,7 +256,7 @@
         deleteData(id){
             var self = this;
             if (confirm("確定要永久刪除嗎 ?")==true){    
-                axios.post('/api/change_inventory_record/delete', {
+                axios.post('/api/change_inventory_record/delete/id', {
                     id:id
                 })
                 .then(function (response) {
@@ -267,6 +268,30 @@
                     self.$router.push({ path: '/error-500' })
                 });
             }  
+        },
+        selectDelete(){
+            var self = this;
+            var select_id = [];
+            for(var key in self.select){
+                select_id.push(self.select[key].id)
+            }
+            if (select_id.length == 0) {
+                self.snackbar = true;
+                self.snackbar_text = '請勾選要刪除的項目 !';
+                return false;
+            }
+            axios.post('/api/change_inventory_record/delete/select', {
+                select:select_id
+            })
+            .then(function (response) {
+                if (response.data.result == 'success') {
+                    self.getData()
+                    self.select = [];
+                }
+            })
+            .catch(function (error) {
+                self.$router.push({ path: '/error-500' })
+            });
         },
         getData() {
             var self = this;

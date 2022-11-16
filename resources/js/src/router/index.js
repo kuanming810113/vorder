@@ -155,22 +155,6 @@ const routes = [{
             keepAlive: true,
         },
     },
-    {
-        path: '/inventory_change_record/insert',
-        name: 'inventory_change_record-insert',
-        component: () => import('@/views/inventory_change_record/Insert.vue'),
-    },
-    {
-        path: '/inventory_change_record/update/:id',
-        name: 'inventory_change_record-update',
-        component: () => import('@/views/inventory_change_record/Update.vue'),
-    },
-    {
-        path: '/inventory_change_record/get/:id',
-        name: 'inventory_change_record-get',
-        component: () => import('@/views/inventory_change_record/Get.vue'),
-    },
-
 
 
     //發布類別

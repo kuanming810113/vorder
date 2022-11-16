@@ -90,33 +90,74 @@ class ChangeInventoryRecordController extends Controller
 	}
 
 
-    public function delete(Request $request)
+    public function delete(Request $request,$action_type)
     {
         $input = $request->all();
 
-        $validator = Validator::make($input, [
-            'id' => 'required',
-        ],[
-            "id.required" => 'id_required',
-        ]);
+        switch ($action_type) {
+            case 'id':
+                $validator = Validator::make($input, [
+                    'id' => 'required',
+                ],[
+                    "id.required" => 'id_required',
+                ]);
 
-        if ($validator->fails()) {
-            return response()->json(['result' => 'validator_error','data' => $validator->errors()->all()]);
+                if ($validator->fails()) {
+                    return response()->json(['result' => 'validator_error','data' => $validator->errors()->all()]);
+                }
+
+                try {
+                    DB::beginTransaction();
+
+                    ChangeInventoryRecord::where('store_id' , Auth::user()->store_id)->where('id',$input['id'])->delete();
+
+                    DB::commit();
+
+                    return response()->json(['result' => 'success']);
+
+                } catch (Exception $e) {
+                    DB::rollback();
+                    return response()->json(['result' => 'error','data' => $e->getMessage()]);
+                }
+
+                break;
+            case 'select':
+                $validator = Validator::make($input, [
+                    'select' => 'required',
+                ],[
+                    "select.required" => 'select_required',
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json(['result' => 'validator_error','data' => $validator->errors()->all()]);
+                }
+
+                try {
+                    DB::beginTransaction();
+
+                    ChangeInventoryRecord::where('store_id' , Auth::user()->store_id)->whereIn('id',$input['select'])->delete();
+
+                    DB::commit();
+
+                    return response()->json(['result' => 'success']);
+
+                } catch (Exception $e) {
+                    DB::rollback();
+                    return response()->json(['result' => 'error','data' => $e->getMessage()]);
+                }
+
+
+
+
+                break;
+
+            default:
+                return response()->json(['result' => 'error'],400);
+                break;
         }
 
-        try {
-            DB::beginTransaction();
 
-            ChangeInventoryRecord::where('store_id' , Auth::user()->store_id)->where('id',$input['id'])->delete();
 
-            DB::commit();
-
-            return response()->json(['result' => 'success']);
-
-        } catch (Exception $e) {
-            DB::rollback();
-            return response()->json(['result' => 'error','data' => $e->getMessage()]);
-        }
 
     }
 }

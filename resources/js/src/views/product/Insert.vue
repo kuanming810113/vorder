@@ -142,7 +142,7 @@ export default {
             },
             style: [{
                 name: '',
-                amount: '',
+                amount: 0,
             }],
             style_autocomplete:[]
         }
@@ -185,7 +185,7 @@ export default {
             var self = this;
             self.style.push({
                 name: '',
-                amount: '',
+                amount: 0,
             });
         },
         delete_style(key) {

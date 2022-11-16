@@ -20,6 +20,13 @@
                 <template v-slot:item.name="{ item }">
                     <a href="javascript:void(0)" @click="getView(item.id)">{{item.name}}</a>
                 </template>
+                <template v-slot:item.type="{ item }">
+                    <div v-if="item.type == 1">一般</div>
+                    <div v-if="item.type == 2">進貨</div>
+                    <div v-if="item.type == 3">退貨</div>
+                    <div v-if="item.type == 4">退料</div>
+                    <div v-if="item.type == 5">報廢</div>
+                </template>
                 <template v-slot:item.price="{ item }">
                     <div :class="getColor(item.price)">{{item.price}}</div>
                 </template>
@@ -49,6 +56,9 @@
                                     <v-col cols="12">
                                     <v-select v-model="searchPlus.company_id" label="合作廠商" :items="company_all" item-text="name" item-value="id" :clearable='true'>
                                     </v-select>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-select v-model="searchPlus.type" label="類型" :items="type_items" item-text="text" item-value="value" clearable></v-select>
                                     </v-col>
                                     <v-col cols="6">
                                         <v-menu ref="start_menu" v-model="start_menu" :close-on-content-click="false" transition="scale-transition" offset-y min-width="auto">
@@ -137,6 +147,7 @@
                 { text: '流水號', value: 'sno', sortable: false },
                 { text: '倉管名稱', value: 'name', sortable: true },
                 { text: '廠商名稱', value: 'company_name', sortable: true },
+                { text: '類型', value: 'type', sortable: true },
                 { text: '金額', value: 'price', sortable: true },
                 { text: '日期', value: 'date', sortable: true },
                 { text: '備註', value: 'remark', sortable: true },
@@ -152,6 +163,7 @@
             search: null,
             searchPlus:{
                 name: null,
+                type:null,
                 start_date: null,
                 end_date: null,
                 is_count:0,
@@ -172,6 +184,15 @@
                 { text: '是', value: 1},
                 { text: '否', value: 0},
             ],
+            type_items: [
+                { text: '一般', value: 1 },
+                { text: '進貨', value: 2 },
+                { text: '退貨', value: 3 },
+                { text: '退料', value: 4 },
+                { text: '報廢', value: 5 },
+                { text: '訂單', value: 6 },
+            ],
+
             company_all: [],
         }
     },
